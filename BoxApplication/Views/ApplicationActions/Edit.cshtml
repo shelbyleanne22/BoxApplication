@@ -1,0 +1,54 @@
+﻿@model BoxApplication.Models.ApplicationAction
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>ApplicationAction</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ApplicationActionID" />
+            <div class="form-group">
+                <label asp-for="ApplicationActionADForeignKey" class="control-label"></label>
+                <select asp-for="ApplicationActionADForeignKey" class="form-control" asp-items="ViewBag.ApplicationActionADForeignKey"></select>
+                <span asp-validation-for="ApplicationActionADForeignKey" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApplicationActionType" class="control-label"></label>
+                <input asp-for="ApplicationActionType" class="form-control" />
+                <span asp-validation-for="ApplicationActionType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApplicationActionDescription" class="control-label"></label>
+                <input asp-for="ApplicationActionDescription" class="form-control" />
+                <span asp-validation-for="ApplicationActionDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApplicationActionObjectModified" class="control-label"></label>
+                <input asp-for="ApplicationActionObjectModified" class="form-control" />
+                <span asp-validation-for="ApplicationActionObjectModified" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApplicationActionDate" class="control-label"></label>
+                <input asp-for="ApplicationActionDate" class="form-control" />
+                <span asp-validation-for="ApplicationActionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
