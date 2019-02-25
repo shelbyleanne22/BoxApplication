@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/BoxApplication/Migrations/20190222225803_myDatabase.cs
+/BoxApplication/Migrations/20190222225803_myDatabase.Designer.cs
