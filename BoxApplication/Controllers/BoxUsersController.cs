@@ -19,6 +19,9 @@ namespace BoxApplication.Controllers
         private Box.V2.BoxClient boxclient;
         private readonly string workingDirectory = Environment.CurrentDirectory;
 
+        //Stub for when we can test active directory calls
+        private List<string> inactiveusers = new List<string> { "testuser1@domain.edu", "testuser2@domain.edu" };
+
         public Box.V2.BoxClient BoxConnection()
         {
             // Read in config file
@@ -50,7 +53,7 @@ namespace BoxApplication.Controllers
             //var boxApplicationContext = _context.BoxUser.Include(b => b.BoxEmail);
             //return View(await boxApplicationContext.ToListAsync());
             BoxCollection<Box.V2.Models.BoxUser> users = await boxclient.UsersManager.GetEnterpriseUsersAsync();
-            IEnumerable<Box.V2.Models.BoxUser> usersdisplay = users.Entries;
+            IEnumerable<Box.V2.Models.BoxUser> usersdisplay = users.Entries.Where(item => inactiveusers.Contains(item.Login));
             return View(usersdisplay);
         }
 
