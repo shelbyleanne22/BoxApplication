@@ -26,7 +26,7 @@ namespace BoxApplication.Controllers
         {
             // Read in config file
             IBoxConfig config = null;
-            using (FileStream fs = new FileStream(workingDirectory + "\\678301_96d24sif_config.json", FileMode.Open))
+            using (FileStream fs = new FileStream(workingDirectory + "\\678301_uhky0lbr_config.json", FileMode.Open))
             {
                 config = BoxConfig.CreateFromJsonFile(fs);
             }
