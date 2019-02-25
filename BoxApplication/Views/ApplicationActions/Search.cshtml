@@ -14,10 +14,6 @@
         <form asp-action="Search">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="First().ApplicationActionADForeignKey" class="control-label"></label>
-                <select asp-for="First().ApplicationActionADForeignKey" class="form-control" asp-items="ViewBag.ApplicationActionADForeignKey"></select>
-            </div>
-            <div class="form-group">
                 <label asp-for="First().ApplicationActionType" class="control-label"></label>
                 <input asp-for="First().ApplicationActionType" class="form-control" />
                 <span asp-validation-for="First().ApplicationActionType" class="text-danger"></span>
