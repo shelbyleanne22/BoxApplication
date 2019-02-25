@@ -1,37 +1,34 @@
-﻿@model IEnumerable<BoxApplication.Models.BoxUser>
+﻿@model IEnumerable<Box.V2.Models.BoxUser>
 
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
-
 <p>
-    <a asp-action="Create">Create New</a>
+    @*<a asp-action="Create">Create New</a>*@
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.BoxEmail)
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BoxName)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BoxLogin)
+                @Html.DisplayNameFor(model => model.Login)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BoxSpaceUsed)
+                @Html.DisplayNameFor(model => model.SpaceUsed)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BoxStatus)
+                @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BoxDateCreated)
+                @Html.DisplayNameFor(model => model.CreatedAt)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BoxDateModified)
+                @Html.DisplayNameFor(model => model.ModifiedAt)
             </th>
             <th></th>
         </tr>
@@ -40,30 +37,30 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.BoxEmail.ADEmail)
+                @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BoxName)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BoxLogin)
+                @Html.DisplayFor(modelItem => item.Login)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BoxSpaceUsed)
+                @Html.DisplayFor(modelItem => item.SpaceUsed)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BoxStatus)
+                @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BoxDateCreated)
+                @Html.DisplayFor(modelItem => item.CreatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BoxDateModified)
+                @Html.DisplayFor(modelItem => item.ModifiedAt)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.BoxID">Edit</a> |
+                @*<a asp-action="Edit" asp-route-id="@item.BoxID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.BoxID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BoxID">Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.BoxID">Delete</a>*@
             </td>
         </tr>
 }
