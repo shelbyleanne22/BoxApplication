@@ -1,0 +1,104 @@
+﻿@model IEnumerable<BoxApplication.Models.ApplicationAction>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+
+<h1>Search</h1>
+
+<h4>ApplicationAction</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Search">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="First().ApplicationActionADForeignKey" class="control-label"></label>
+                <select asp-for="First().ApplicationActionADForeignKey" class="form-control" asp-items="ViewBag.ApplicationActionADForeignKey"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="First().ApplicationActionType" class="control-label"></label>
+                <input asp-for="First().ApplicationActionType" class="form-control" />
+                <span asp-validation-for="First().ApplicationActionType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="First().ApplicationActionDescription" class="control-label"></label>
+                <input asp-for="First().ApplicationActionDescription" class="form-control" />
+                <span asp-validation-for="First().ApplicationActionDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="First().ApplicationActionObjectModified" class="control-label"></label>
+                <input asp-for="First().ApplicationActionObjectModified" class="form-control" />
+                <span asp-validation-for="First().ApplicationActionObjectModified" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Count() > 1)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationActionADUser)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationActionType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationActionDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationActionObjectModified)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationActionDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                @if (item.ApplicationActionType != null)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApplicationActionADUser.ADEmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApplicationActionType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApplicationActionDescription)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApplicationActionObjectModified)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApplicationActionDate)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ApplicationActionID">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.ApplicationActionID">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.ApplicationActionID">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -156,5 +156,44 @@ namespace BoxApplication.Controllers
         {
             return _context.Action.Any(e => e.ApplicationActionID == id);
         }
+
+
+
+
+
+
+
+        // Search stuff
+
+
+        // GET: ApplicationActions/Search
+        public IActionResult Search()
+        {
+            var list = new List<ApplicationAction>
+            {
+                new ApplicationAction()
+            };
+            return View(list);
+        }
+
+        // POST: ApplicationActions/Search
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Search([Bind("ApplicationActionID,ApplicationActionADForeignKey,ApplicationActionType,ApplicationActionDescription,ApplicationActionObjectModified,ApplicationActionDate")] ApplicationAction actionSearch)
+        {
+            var searchResults = from action in _context.Action
+                                where (actionSearch.ApplicationActionADForeignKey == null || action.ApplicationActionADForeignKey == actionSearch.ApplicationActionADForeignKey)
+                                      && (actionSearch.ApplicationActionType == null || action.ApplicationActionType == actionSearch.ApplicationActionType)
+                                      && (actionSearch.ApplicationActionDescription == null || action.ApplicationActionDescription == actionSearch.ApplicationActionDescription)
+                                      && (actionSearch.ApplicationActionObjectModified == null || action.ApplicationActionObjectModified == actionSearch.ApplicationActionObjectModified)
+                                select action;
+            var searchResultsList = searchResults.ToList();
+            searchResultsList.Insert(0, new ApplicationAction());
+
+            return View(searchResultsList);
+        }
+
     }
 }
