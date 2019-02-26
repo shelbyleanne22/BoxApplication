@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BoxApplication.Models;
+using System.DirectoryServices;
 
 namespace BoxApplication.Controllers
 {
@@ -21,7 +22,41 @@ namespace BoxApplication.Controllers
         // GET: ActiveDirectoryUsers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ActiveDirectoryUser.ToListAsync());
+            List<ActiveDirectoryUser> inactiveADusers = new List<ActiveDirectoryUser>();
+
+            string DomainPath = "LDAP://mcghi.mcg.edu/OU=students/sccs,DC=mcg,DC=edu/";
+            //creates directoryentry object that binds the instance to the domain path
+            string username = "";
+            string password = "";
+            DirectoryEntry searchRoot = new DirectoryEntry(DomainPath, username, password);
+            //creates a directorysearcher object which searches for all users in the domain
+            DirectorySearcher search = new DirectorySearcher(searchRoot);
+            //filters the search 
+            search.Filter = "(&(objectCategory=person)(objectClass=user))";
+            search.PropertiesToLoad.Add("samaccountname");
+            search.PropertiesToLoad.Add("mail");
+            search.PropertiesToLoad.Add("displayname");
+            SearchResult result;
+            SearchResultCollection resultCol = search.FindAll();
+
+            for(int counter = 0; counter < resultCol.Count; counter++)
+            {
+                string UserNameEmailString = string.Empty;
+                result = resultCol[counter];
+                if (result.Properties.Contains("samaccountname") &&
+                         result.Properties.Contains("mail") &&
+                    result.Properties.Contains("displayname"))
+                {
+                    ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
+                    activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
+                    activeDirectoryUser.ADFirstName = (String)result.Properties["displayname"][0];
+                    activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
+                    inactiveADusers.Add(activeDirectoryUser);
+                }
+            }
+
+
+            return View(inactiveADusers);
         }
 
         // GET: ActiveDirectoryUsers/Details/5
