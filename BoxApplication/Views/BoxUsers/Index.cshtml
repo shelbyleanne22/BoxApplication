@@ -22,8 +22,8 @@
                 @Html.DisplayNameFor(model => model.SpaceUsed)
             </th>
             @*<th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>*@
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.CreatedAt)
             </th>
@@ -34,35 +34,42 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Login)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SpaceUsed)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>*@
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModifiedAt)
-            </td>
-            <td>
-                @*<a asp-action="Edit" asp-route-id="@item.BoxID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BoxID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BoxID">Delete</a>*@
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Login)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpaceUsed)
+                </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModifiedAt)
+                </td>
+                <td>
+                    @*<a asp-action="Edit" asp-route-id="@item.BoxID">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.BoxID">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.BoxID">Delete</a>*@
+                </td>
+            </tr>
+        }
     </tbody>
+
 </table>
+
+<div class="form-group">
+    <a asp-action="RemoveInactiveAccounts">Remove Accounts</a>
+</div>
+
