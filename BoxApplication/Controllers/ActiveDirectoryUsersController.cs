@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BoxApplication.Models;
 using System.DirectoryServices;
+using System.Net;
+using System.DirectoryServices.Protocols;
 
 namespace BoxApplication.Controllers
 {
@@ -25,10 +27,25 @@ namespace BoxApplication.Controllers
             List<ActiveDirectoryUser> inactiveADusers = new List<ActiveDirectoryUser>();
 
             string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu:389/OU=students/sccs,DC=mcg,DC=edu/";
-            //creates directoryentry object that binds the instance to the domain path
             string username = "";
             string password = "";
-            DirectoryEntry searchRoot = new DirectoryEntry(DomainPath, username, password);
+    
+            var credentials = new NetworkCredential(username, password);
+            var serverId = new LdapDirectoryIdentifier("hi - root03.mcghi.mcg.edu:389");
+
+            var conn = new LdapConnection(serverId, credentials);
+            try
+            {
+                conn.Bind();
+            }
+            catch (Exception)
+            {
+                
+            }
+
+
+            //creates directoryentry object that binds the instance to the domain path
+            DirectoryEntry searchRoot = new DirectoryEntry(DomainPath);
             //creates a directorysearcher object which searches for all users in the domain
             DirectorySearcher search = new DirectorySearcher(searchRoot);
             //filters the search to only inactive/disabled accounts
@@ -55,6 +72,8 @@ namespace BoxApplication.Controllers
                     inactiveADusers.Add(activeDirectoryUser);
                 }
             }
+
+            conn.Dispose();
 
             return View(inactiveADusers);
         }
@@ -183,5 +202,7 @@ namespace BoxApplication.Controllers
         {
             return _context.ActiveDirectoryUser.Any(e => e.ADEmail == id);
         }
+
+
     }
 }
