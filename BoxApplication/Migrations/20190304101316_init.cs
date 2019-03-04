@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BoxApplication.Migrations
 {
-    public partial class init : Migration
+    public partial class 
+        init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
