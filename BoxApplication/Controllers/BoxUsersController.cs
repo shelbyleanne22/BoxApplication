@@ -53,7 +53,10 @@ namespace BoxApplication.Controllers
                 newUser.BoxDateModified = user.ModifiedAt.Value;
                 newUser.BoxDateCreated = user.CreatedAt.Value;
                 newUser.BoxSpaceUsed = user.SpaceUsed.Value;
-                _context.BoxUsers.Update(newUser);
+                if (_context.BoxUsers.Contains(newUser))
+                    _context.BoxUsers.Update(newUser);
+                else
+                    _context.BoxUsers.Add(newUser);
                 await _context.SaveChangesAsync();
             }
         }
@@ -71,7 +74,7 @@ namespace BoxApplication.Controllers
             return (inactiveboxusers);
         }
 
-        public void LogRemoval(string userid)
+        public async Task LogRemoval(string userid)
         {
             ApplicationAction act1 = new ApplicationAction();
             act1.ApplicationActionADUser = new ActiveDirectoryUser();
@@ -80,7 +83,7 @@ namespace BoxApplication.Controllers
             //act1.ActionObjectModified = "";
             act1.ApplicationActionDate = DateTime.Now;
             _context.Add(act1);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
 
@@ -88,6 +91,7 @@ namespace BoxApplication.Controllers
         public async Task<IActionResult> Index()
         {
             await UpdateDB();
+            //_context.Database.ExecuteSqlCommand("TRUNCATE TABLE [BoxUsers]");
             return View(await GetInactiveUsers());
         }
 
@@ -99,8 +103,8 @@ namespace BoxApplication.Controllers
             {
                 BoxFolder movedFolder = await boxclient.UsersManager.MoveUserFolderAsync(user.BoxID, currentUser.Id);
                 await boxclient.UsersManager.DeleteEnterpriseUserAsync(user.BoxID, false, true);
-                _context.BoxUsers.Remove(user);
                 LogRemoval(user.BoxLogin);
+                _context.BoxUsers.Remove(user);
             }
             await _context.SaveChangesAsync();
             return View("Index");
