@@ -24,15 +24,15 @@ namespace BoxApplication.Controllers
         {
             List<ActiveDirectoryUser> inactiveADusers = new List<ActiveDirectoryUser>();
 
-            string DomainPath = "LDAP://mcghi.mcg.edu/OU=students/sccs,DC=mcg,DC=edu/";
+            string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu:389/OU=students/sccs,DC=mcg,DC=edu/";
             //creates directoryentry object that binds the instance to the domain path
             string username = "";
             string password = "";
             DirectoryEntry searchRoot = new DirectoryEntry(DomainPath, username, password);
             //creates a directorysearcher object which searches for all users in the domain
             DirectorySearcher search = new DirectorySearcher(searchRoot);
-            //filters the search 
-            search.Filter = "(&(objectCategory=person)(objectClass=user))";
+            //filters the search to only inactive/disabled accounts
+            search.Filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))";
             search.PropertiesToLoad.Add("samaccountname");
             search.PropertiesToLoad.Add("mail");
             search.PropertiesToLoad.Add("displayname");
@@ -51,10 +51,10 @@ namespace BoxApplication.Controllers
                     activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
                     activeDirectoryUser.ADFirstName = (String)result.Properties["displayname"][0];
                     activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
+                    activeDirectoryUser.ADStatus = "INACTIVE";
                     inactiveADusers.Add(activeDirectoryUser);
                 }
             }
-
 
             return View(inactiveADusers);
         }
