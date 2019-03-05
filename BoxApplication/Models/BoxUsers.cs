@@ -12,21 +12,21 @@ namespace BoxApplication.Models
     {
         [Key]
         [DisplayName("ID")]
-        public string BoxID { get; set; }
+        public string ID { get; set; }
 
         [DisplayName("Name")]
-        public string BoxName { get; set; }
+        public string Name { get; set; }
 
         [DisplayName("Email")]
-        public string BoxLogin { get; set; }
+        public string Login { get; set; }
 
         [DisplayName("Space Used")]
-        public long BoxSpaceUsed { get; set; }
+        public long SpaceUsed { get; set; }
 
         [DisplayName("Date Created")]
-        public DateTime BoxDateCreated { get; set; }
+        public DateTime DateCreated { get; set; }
 
         [DisplayName("Date Modified")]
-        public DateTime BoxDateModified { get; set; }
+        public DateTime DateModified { get; set; }
     }
 }

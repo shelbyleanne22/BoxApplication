@@ -3,8 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BoxApplication.Migrations
 {
-    public partial class 
-        init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -24,7 +23,7 @@ namespace BoxApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BoxUsers",
+                name: "BoxUsersList",
                 columns: table => new
                 {
                     BoxID = table.Column<string>(nullable: false),
@@ -36,7 +35,7 @@ namespace BoxApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BoxUsers", x => x.BoxID);
+                    table.PrimaryKey("PK_BoxUsersList", x => x.BoxID);
                 });
 
             migrationBuilder.CreateTable(
@@ -73,7 +72,7 @@ namespace BoxApplication.Migrations
                 name: "Action");
 
             migrationBuilder.DropTable(
-                name: "BoxUsers");
+                name: "BoxUsersList");
 
             migrationBuilder.DropTable(
                 name: "ActiveDirectoryUser");

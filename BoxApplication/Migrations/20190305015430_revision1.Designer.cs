@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    [Migration("20190304101316_init")]
-    partial class init
+    [Migration("20190305015430_revision1")]
+    partial class revision1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,51 +41,38 @@ namespace BoxApplication.Migrations
 
             modelBuilder.Entity("BoxApplication.Models.ApplicationAction", b =>
                 {
-                    b.Property<Guid>("ApplicationActionID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("ApplicationActionADForeignKey");
+                    b.Property<DateTime>("Date");
 
-                    b.Property<DateTime>("ApplicationActionDate");
+                    b.Property<string>("Type");
 
-                    b.Property<string>("ApplicationActionDescription");
+                    b.Property<string>("User");
 
-                    b.Property<string>("ApplicationActionObjectModified");
-
-                    b.Property<string>("ApplicationActionType");
-
-                    b.HasKey("ApplicationActionID");
-
-                    b.HasIndex("ApplicationActionADForeignKey");
+                    b.HasKey("ID");
 
                     b.ToTable("Action");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>
                 {
-                    b.Property<string>("BoxID")
+                    b.Property<string>("ID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("BoxDateCreated");
+                    b.Property<DateTime>("DateCreated");
 
-                    b.Property<DateTime>("BoxDateModified");
+                    b.Property<DateTime>("DateModified");
 
-                    b.Property<string>("BoxLogin");
+                    b.Property<string>("Login");
 
-                    b.Property<string>("BoxName");
+                    b.Property<string>("Name");
 
-                    b.Property<long>("BoxSpaceUsed");
+                    b.Property<long>("SpaceUsed");
 
-                    b.HasKey("BoxID");
+                    b.HasKey("ID");
 
-                    b.ToTable("BoxUsers");
-                });
-
-            modelBuilder.Entity("BoxApplication.Models.ApplicationAction", b =>
-                {
-                    b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "ApplicationActionADUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationActionADForeignKey");
+                    b.ToTable("BoxUsersList");
                 });
 #pragma warning restore 612, 618
         }

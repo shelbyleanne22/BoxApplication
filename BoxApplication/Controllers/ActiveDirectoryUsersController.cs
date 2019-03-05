@@ -21,7 +21,7 @@ namespace BoxApplication.Controllers
         // GET: ActiveDirectoryUsers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ActiveDirectoryUser.ToListAsync());
+            return View(await _context.ActiveDirectoryUsers.ToListAsync());
         }
 
         // GET: ActiveDirectoryUsers/Details/5
@@ -32,7 +32,7 @@ namespace BoxApplication.Controllers
                 return NotFound();
             }
 
-            var activeDirectoryUser = await _context.ActiveDirectoryUser
+            var activeDirectoryUser = await _context.ActiveDirectoryUsers
                 .FirstOrDefaultAsync(m => m.ADEmail == id);
             if (activeDirectoryUser == null)
             {
@@ -72,7 +72,7 @@ namespace BoxApplication.Controllers
                 return NotFound();
             }
 
-            var activeDirectoryUser = await _context.ActiveDirectoryUser.FindAsync(id);
+            var activeDirectoryUser = await _context.ActiveDirectoryUsers.FindAsync(id);
             if (activeDirectoryUser == null)
             {
                 return NotFound();
@@ -123,7 +123,7 @@ namespace BoxApplication.Controllers
                 return NotFound();
             }
 
-            var activeDirectoryUser = await _context.ActiveDirectoryUser
+            var activeDirectoryUser = await _context.ActiveDirectoryUsers
                 .FirstOrDefaultAsync(m => m.ADEmail == id);
             if (activeDirectoryUser == null)
             {
@@ -138,15 +138,15 @@ namespace BoxApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var activeDirectoryUser = await _context.ActiveDirectoryUser.FindAsync(id);
-            _context.ActiveDirectoryUser.Remove(activeDirectoryUser);
+            var activeDirectoryUser = await _context.ActiveDirectoryUsers.FindAsync(id);
+            _context.ActiveDirectoryUsers.Remove(activeDirectoryUser);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ActiveDirectoryUserExists(string id)
         {
-            return _context.ActiveDirectoryUser.Any(e => e.ADEmail == id);
+            return _context.ActiveDirectoryUsers.Any(e => e.ADEmail == id);
         }
     }
 }

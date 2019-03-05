@@ -4,14 +4,16 @@ using BoxApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    partial class BoxApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20190304234250_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,43 +36,56 @@ namespace BoxApplication.Migrations
 
                     b.HasKey("ADEmail");
 
-                    b.ToTable("ActiveDirectoryUsers");
+                    b.ToTable("ActiveDirectoryUser");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.ApplicationAction", b =>
                 {
-                    b.Property<Guid>("ID")
+                    b.Property<Guid>("ApplicationActionID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("Date");
+                    b.Property<string>("ApplicationActionADForeignKey");
 
-                    b.Property<string>("Type");
+                    b.Property<DateTime>("ApplicationActionDate");
 
-                    b.Property<string>("User");
+                    b.Property<string>("ApplicationActionDescription");
 
-                    b.HasKey("ID");
+                    b.Property<string>("ApplicationActionObjectModified");
 
-                    b.ToTable("ApplicationActions");
+                    b.Property<string>("ApplicationActionType");
+
+                    b.HasKey("ApplicationActionID");
+
+                    b.HasIndex("ApplicationActionADForeignKey");
+
+                    b.ToTable("Action");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>
                 {
-                    b.Property<string>("ID")
+                    b.Property<string>("BoxID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("BoxDateCreated");
 
-                    b.Property<DateTime>("DateModified");
+                    b.Property<DateTime>("BoxDateModified");
 
-                    b.Property<string>("Login");
+                    b.Property<string>("BoxLogin");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("BoxName");
 
-                    b.Property<long>("SpaceUsed");
+                    b.Property<long>("BoxSpaceUsed");
 
-                    b.HasKey("ID");
+                    b.HasKey("BoxID");
 
-                    b.ToTable("BoxUsers");
+                    b.ToTable("BoxUsersList");
+                });
+
+            modelBuilder.Entity("BoxApplication.Models.ApplicationAction", b =>
+                {
+                    b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "ApplicationActionADUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationActionADForeignKey");
                 });
 #pragma warning restore 612, 618
         }

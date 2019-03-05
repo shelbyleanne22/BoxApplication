@@ -4,14 +4,16 @@ using BoxApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    partial class BoxApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20190305022138_revision2")]
+    partial class revision2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
