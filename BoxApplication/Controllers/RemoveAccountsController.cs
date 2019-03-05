@@ -23,7 +23,7 @@ namespace BoxApplication.Controllers
         private readonly string workingDirectory = Environment.CurrentDirectory;
 
         //Stub for when we can test active directory calls
-        private List<string> inactiveusers = new List<string> { "testuser1@domain.edu", "testuser2@domain.edu", "ajarnagin1992@gmail.com" };
+        private List<string> inactiveusersstub = new List<string> { "testuser1@domain.edu", "testuser2@domain.edu", "ajarnagin1992@gmail.com" };
 
         // GET: ActiveDirectoryUsers
         public List<string> GetInactiveAD()
@@ -35,7 +35,7 @@ namespace BoxApplication.Controllers
             string password = "";
 
             var credentials = new NetworkCredential(username, password);
-            var serverId = new LdapDirectoryIdentifier("hi - root03.mcghi.mcg.edu:389");
+            var serverId = new LdapDirectoryIdentifier("hi-root03.mcghi.mcg.edu:389");
 
             var conn = new LdapConnection(serverId, credentials);
             try
@@ -44,7 +44,7 @@ namespace BoxApplication.Controllers
             }
             catch (Exception)
             {
-
+                throw new Exception("AD connection failed, try again later.");  
             }
 
             //creates directoryentry object that binds the instance to the domain path
@@ -68,7 +68,7 @@ namespace BoxApplication.Controllers
             }
             conn.Dispose();
 
-            return inactiveusers;
+            return inactiveADusers;
         }
 
         public Box.V2.BoxClient BoxConnection()
@@ -119,7 +119,7 @@ namespace BoxApplication.Controllers
         public async Task<List<BoxUsers>> GetInactiveUsers()
         {
             List<BoxUsers> users = await _context.BoxUsers.ToListAsync();
-            List<BoxUsers> inactiveboxusers = users.Where(item => inactiveusers.Contains(item.Login)).ToList();
+            List<BoxUsers> inactiveboxusers = users.Where(item => inactiveusersstub.Contains(item.Login)).ToList();
             return (inactiveboxusers);
         }
 
