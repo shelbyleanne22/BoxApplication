@@ -2,24 +2,62 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BoxApplication.Models;
+using Box.V2.JWTAuth;
+using Box.V2.Config;
+using Box.V2.Models;
 
 namespace BoxApplication.Controllers
 {
     public class BoxUsersController : Controller
     {
         private readonly BoxApplicationContext _context;
+        private Box.V2.BoxClient boxclient;
+        private readonly string workingDirectory = Environment.CurrentDirectory;
+
+        //Stub for when we can test active directory calls
+        private List<string> inactiveusers = new List<string> { "testuser1@domain.edu", "testuser2@domain.edu" };
+
+        public Box.V2.BoxClient BoxConnection()
+        {
+            // Read in config file
+            IBoxConfig config = null;
+            using (FileStream fs = new FileStream(workingDirectory + "\\678301_uhky0lbr_config.json", FileMode.Open))
+            {
+                config = BoxConfig.CreateFromJsonFile(fs);
+            }
+
+            // Create JWT auth using config file
+            var boxJWT = new BoxJWTAuth(config);
+
+            // Create admin client
+            var adminToken = boxJWT.AdminToken();
+            var client = boxJWT.AdminClient(adminToken);
+
+            return client;
+        }
 
         public BoxUsersController(BoxApplicationContext context)
         {
             _context = context;
+            boxclient = BoxConnection();
         }
 
         // GET: BoxUsers
         public async Task<IActionResult> Index()
+        {
+            //var boxApplicationContext = _context.BoxUser.Include(b => b.BoxEmail);
+            //return View(await boxApplicationContext.ToListAsync());
+            BoxCollection<Box.V2.Models.BoxUser> users = await boxclient.UsersManager.GetEnterpriseUsersAsync();
+            IEnumerable<Box.V2.Models.BoxUser> usersdisplay = users.Entries.Where(item => inactiveusers.Contains(item.Login));
+            return View(usersdisplay);
+        }
+
+        public async Task<IActionResult> RemoveInactiveAccounts()
         {
             var boxApplicationContext = _context.BoxUser.Include(b => b.BoxEmail);
             return View(await boxApplicationContext.ToListAsync());
@@ -56,7 +94,7 @@ namespace BoxApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BoxID,BoxADForeignKey,BoxName,BoxLogin,BoxSpaceUsed,BoxStatus,BoxDateCreated,BoxDateModified")] BoxUser boxUser)
+        public async Task<IActionResult> Create([Bind("BoxID,BoxADForeignKey,BoxName,BoxLogin,BoxSpaceUsed,BoxStatus,BoxDateCreated,BoxDateModified")] Models.BoxUser boxUser)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +128,7 @@ namespace BoxApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BoxID,BoxADForeignKey,BoxName,BoxLogin,BoxSpaceUsed,BoxStatus,BoxDateCreated,BoxDateModified")] BoxUser boxUser)
+        public async Task<IActionResult> Edit(string id, [Bind("BoxID,BoxADForeignKey,BoxName,BoxLogin,BoxSpaceUsed,BoxStatus,BoxDateCreated,BoxDateModified")] Models.BoxUser boxUser)
         {
             if (id != boxUser.BoxID)
             {

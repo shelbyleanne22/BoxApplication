@@ -181,13 +181,12 @@ namespace BoxApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Search([Bind("ApplicationActionID,ApplicationActionADForeignKey,ApplicationActionType,ApplicationActionDescription,ApplicationActionObjectModified,ApplicationActionDate")] ApplicationAction actionSearch)
+        public IActionResult Search([Bind("ApplicationActionID,ApplicationActionADForeignKey,ApplicationActionType,ApplicationActionDescription,ApplicationActionObjectModified,ApplicationActionDate")] ApplicationAction actionSearch)
         {
             var searchResults = from action in _context.Action
-                                where (actionSearch.ApplicationActionADForeignKey      == null || action.ApplicationActionADForeignKey   == actionSearch.ApplicationActionADForeignKey)
-                                      && (actionSearch.ApplicationActionType           == null || action.ApplicationActionType == actionSearch.ApplicationActionType)
-                                      && (actionSearch.ApplicationActionDescription    == null || action.ApplicationActionDescription    == actionSearch.ApplicationActionDescription)
-                                      && (actionSearch.ApplicationActionObjectModified == null || action.ApplicationActionObjectModified == actionSearch.ApplicationActionObjectModified)
+                                where (actionSearch.ApplicationActionType              == null || action.ApplicationActionType.ToLower().Contains(actionSearch.ApplicationActionType.ToLower()))
+                                      && (actionSearch.ApplicationActionDescription    == null || action.ApplicationActionDescription.ToLower().Contains(actionSearch.ApplicationActionDescription.ToLower()))
+                                      && (actionSearch.ApplicationActionObjectModified == null || action.ApplicationActionObjectModified.ToLower().Contains(actionSearch.ApplicationActionObjectModified.ToLower()))
                                 select action;
             var searchResultsList = searchResults.ToList();
             searchResultsList.Insert(0, new ApplicationAction());
