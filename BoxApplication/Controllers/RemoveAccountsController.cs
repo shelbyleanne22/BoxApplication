@@ -30,48 +30,54 @@ namespace BoxApplication.Controllers
         {
             List<string> inactiveADusers = new List<string>();
 
-            string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu:389/OU=students/sccs,DC=mcg,DC=edu/";
+            string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu";
+            //CN = sccs,CN = students, /DC=mcghi,DC=mcg,DC=edu/
             string username = "";
             string password = "";
 
-            var credentials = new NetworkCredential(username, password);
-            var serverId = new LdapDirectoryIdentifier("hi-root03.mcghi.mcg.edu:389");
 
-            var conn = new LdapConnection(serverId, credentials);
-            try
-            {
-                conn.Bind();
-            }
-            catch (Exception)
-            {
-                throw new Exception("AD connection failed, try again later.");  
-            }
 
             //creates directoryentry object that binds the instance to the domain path
-            DirectoryEntry searchRoot = new DirectoryEntry(DomainPath);
+            DirectoryEntry searchRoot = new DirectoryEntry(DomainPath, username, password, AuthenticationTypes.Secure);
             //creates a directorysearcher object which searches for all users in the domain
             DirectorySearcher search = new DirectorySearcher(searchRoot);
             //filters the search to only inactive/disabled accounts
             search.Filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))";
+            search.PropertiesToLoad.Add("samaccountname");
             search.PropertiesToLoad.Add("mail");
+            search.PropertiesToLoad.Add("displayname");
+            search.PropertiesToLoad.Add("whenchanged");
+
             SearchResult result;
             SearchResultCollection resultCol = search.FindAll();
 
-            for (int counter = 0; counter < resultCol.Count; counter++)
+
+            //displays and redirects if no inactive accounts are found
+            if (resultCol.Count.Equals(0))
             {
-                string UserNameEmailString = string.Empty;
-                result = resultCol[counter];
-                if (result.Properties.Contains("mail"))
-                {
-                    inactiveADusers.Add((String)result.Properties["mail"][0]);
-                }
+                //for production
+                ModelState.AddModelError("Error", "No inactive accounts exist.");
             }
-            conn.Dispose();
+            else
+            {
+                for (int counter = 0; counter < resultCol.Count; counter++)
+                {
+                    string UserNameEmailString = string.Empty;
+                    result = resultCol[counter];
+                    if (result.Properties.Contains("samaccountname") &&
+                             result.Properties.Contains("mail") &&
+                        result.Properties.Contains("displayname"))
+                    {
+                        inactiveADusers.Add((String)result.Properties["mail"][0]);
+                    }
+                }
+
+            }
 
             return inactiveADusers;
         }
 
-        public Box.V2.BoxClient BoxConnection()
+            public Box.V2.BoxClient BoxConnection()
         {
             // Read in config file
             IBoxConfig config = null;
