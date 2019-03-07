@@ -4,11 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Inactive Active Directory Accounts</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <script type="text/javascript">
     @if (!ViewData.ModelState.IsValid && ViewData.ModelState["Error"].Errors.Count > 0)
     {
@@ -52,11 +49,6 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ADDateModified)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ADEmail">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ADEmail">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ADEmail">Delete</a>
                     </td>
                 </tr>
         }
