@@ -23,8 +23,8 @@ namespace BoxApplication.Models
         [DisplayName("Status")]
         public string ADStatus { get; set; }
 
-        [DisplayName("Date Inactive")]
-        public DateTime ADDateInactive { get; set; }
+        [DisplayName("Date Last Modified")]
+        public DateTime ADDateModified { get; set; }
     }
 }
 
