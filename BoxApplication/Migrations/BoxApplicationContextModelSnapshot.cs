@@ -24,7 +24,7 @@ namespace BoxApplication.Migrations
                     b.Property<string>("ADEmail")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("ADDateInactive");
+                    b.Property<DateTime>("ADDateModified");
 
                     b.Property<string>("ADFirstName");
 

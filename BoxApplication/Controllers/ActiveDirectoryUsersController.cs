@@ -35,8 +35,6 @@ namespace BoxApplication.Controllers
 
             //creates directoryentry object that binds the instance to the domain path
             DirectoryEntry searchRoot = new DirectoryEntry(DomainPath, username, password, AuthenticationTypes.Secure);
-            //searchRoot.Username = username;
-            //searchRoot.Password = password;
             //creates a directorysearcher object which searches for all users in the domain
             DirectorySearcher search = new DirectorySearcher(searchRoot);
             //filters the search to only inactive/disabled accounts
@@ -44,24 +42,38 @@ namespace BoxApplication.Controllers
             search.PropertiesToLoad.Add("samaccountname");
             search.PropertiesToLoad.Add("mail");
             search.PropertiesToLoad.Add("displayname");
+            search.PropertiesToLoad.Add("whenchanged");
+
             SearchResult result;
             SearchResultCollection resultCol = search.FindAll();
 
-            for (int counter = 0; counter < resultCol.Count; counter++)
+
+            //displays and redirects if no inactive accounts are found
+            if (resultCol.Count.Equals(0))
             {
-                string UserNameEmailString = string.Empty;
-                result = resultCol[counter];
-                if (result.Properties.Contains("samaccountname") &&
-                         result.Properties.Contains("mail") &&
-                    result.Properties.Contains("displayname"))
+                //for production
+                ModelState.AddModelError("Error", "No inactive accounts exist.");
+            }
+            else
+            {
+                for (int counter = 0; counter < resultCol.Count; counter++)
                 {
-                    ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
-                    activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
-                    activeDirectoryUser.ADFirstName = (String)result.Properties["displayname"][0];
-                    activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
-                    activeDirectoryUser.ADStatus = "INACTIVE";
-                    inactiveADusers.Add(activeDirectoryUser);
+                    string UserNameEmailString = string.Empty;
+                    result = resultCol[counter];
+                    if (result.Properties.Contains("samaccountname") &&
+                             result.Properties.Contains("mail") &&
+                        result.Properties.Contains("displayname"))
+                    {
+                        ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
+                        activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
+                        activeDirectoryUser.ADFirstName = (String)result.Properties["displayname"][0];
+                        activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
+                        activeDirectoryUser.ADDateModified = (DateTime)result.Properties["whenchanged"][0];
+                        activeDirectoryUser.ADStatus = "INACTIVE";
+                        inactiveADusers.Add(activeDirectoryUser);
+                    }
                 }
+
             }
 
 
@@ -97,7 +109,7 @@ namespace BoxApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ADEmail,ADUsername,ADFirstName,ADStatus,ADDateInactive")] ActiveDirectoryUser activeDirectoryUser)
+        public async Task<IActionResult> Create([Bind("ADEmail,ADUsername,ADFirstName,ADStatus,ADDateModified")] ActiveDirectoryUser activeDirectoryUser)
         {
             if (ModelState.IsValid)
             {
@@ -129,7 +141,7 @@ namespace BoxApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ADEmail,ADUsername,ADFirstName,ADStatus,ADDateInactive")] ActiveDirectoryUser activeDirectoryUser)
+        public async Task<IActionResult> Edit(string id, [Bind("ADEmail,ADUsername,ADFirstName,ADStatus,ADDateModified")] ActiveDirectoryUser activeDirectoryUser)
         {
             if (id != activeDirectoryUser.ADEmail)
             {
