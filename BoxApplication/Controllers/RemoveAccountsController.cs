@@ -77,7 +77,7 @@ namespace BoxApplication.Controllers
             return inactiveADusers;
         }
 
-            public Box.V2.BoxClient BoxConnection()
+        public Box.V2.BoxClient BoxConnection()
         {
             // Read in config file
             IBoxConfig config = null;
