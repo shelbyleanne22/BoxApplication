@@ -76,7 +76,6 @@ namespace BoxApplication.Controllers
 
             }
 
-
             return View(inactiveADusers);
         }
 
