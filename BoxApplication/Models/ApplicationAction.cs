@@ -11,24 +11,17 @@ namespace BoxApplication.Models
     public class ApplicationAction
     {
         [Key]
-        public Guid ApplicationActionID { get; set; }
-
-        [DisplayName("Action Created By")]
-        [ForeignKey("ApplicationActionADForeignKey")]
-        public ActiveDirectoryUser ApplicationActionADUser { get; set; }
-
-        public string ApplicationActionADForeignKey { get; set; }
-
-        [DisplayName("Action Type")]
-        public string ApplicationActionType { get; set; }
+        [DisplayName("Action ID")]
+        public Guid ID { get; set; }
 
         [DisplayName("Action Description")]
-        public string ApplicationActionDescription { get; set; }
+        public string Type { get; set; }
 
-        [DisplayName("Object Modified")]
-        public string ApplicationActionObjectModified { get; set; }
+        [DisplayName("Affected Account")]
+        [ForeignKey("BoxUsers")]
+        public string User { get; set; }
 
-        [DisplayName("Action Date")]
-        public DateTime ApplicationActionDate { get; set; }
+        [DisplayName("Date")]
+        public DateTime Date { get; set; }
     }
 }

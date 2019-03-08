@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    [Migration("20190222225803_myDatabase")]
-    partial class myDatabase
+    [Migration("20190304234250_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,12 +61,10 @@ namespace BoxApplication.Migrations
                     b.ToTable("Action");
                 });
 
-            modelBuilder.Entity("BoxApplication.Models.BoxUser", b =>
+            modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>
                 {
                     b.Property<string>("BoxID")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("BoxADForeignKey");
 
                     b.Property<DateTime>("BoxDateCreated");
 
@@ -76,15 +74,11 @@ namespace BoxApplication.Migrations
 
                     b.Property<string>("BoxName");
 
-                    b.Property<int>("BoxSpaceUsed");
-
-                    b.Property<string>("BoxStatus");
+                    b.Property<long>("BoxSpaceUsed");
 
                     b.HasKey("BoxID");
 
-                    b.HasIndex("BoxADForeignKey");
-
-                    b.ToTable("BoxUser");
+                    b.ToTable("BoxUsersList");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.ApplicationAction", b =>
@@ -92,13 +86,6 @@ namespace BoxApplication.Migrations
                     b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "ApplicationActionADUser")
                         .WithMany()
                         .HasForeignKey("ApplicationActionADForeignKey");
-                });
-
-            modelBuilder.Entity("BoxApplication.Models.BoxUser", b =>
-                {
-                    b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "BoxEmail")
-                        .WithMany()
-                        .HasForeignKey("BoxADForeignKey");
                 });
 #pragma warning restore 612, 618
         }

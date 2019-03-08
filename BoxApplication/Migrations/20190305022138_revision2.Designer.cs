@@ -4,14 +4,16 @@ using BoxApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    partial class BoxApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20190305022138_revision2")]
+    partial class revision2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +26,7 @@ namespace BoxApplication.Migrations
                     b.Property<string>("ADEmail")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("ADDateModified");
+                    b.Property<DateTime>("ADDateInactive");
 
                     b.Property<string>("ADFirstName");
 
@@ -51,20 +53,6 @@ namespace BoxApplication.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("ApplicationActions");
-                });
-
-            modelBuilder.Entity("BoxApplication.Models.BoxFile", b =>
-                {
-                    b.Property<string>("BoxFileID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("BoxFileName");
-
-                    b.Property<string>("BoxFileType");
-
-                    b.HasKey("BoxFileID");
-
-                    b.ToTable("BoxFile");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>
