@@ -4,14 +4,16 @@ using BoxApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    partial class BoxApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20190307204409_AddedBoxFileClass")]
+    partial class AddedBoxFileClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,20 +59,6 @@ namespace BoxApplication.Migrations
                     b.HasIndex("ApplicationActionADForeignKey");
 
                     b.ToTable("Action");
-                });
-
-            modelBuilder.Entity("BoxApplication.Models.BoxFile", b =>
-                {
-                    b.Property<string>("BoxFileID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("BoxFileName");
-
-                    b.Property<string>("BoxFileType");
-
-                    b.HasKey("BoxFileID");
-
-                    b.ToTable("BoxFile");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.BoxUser", b =>

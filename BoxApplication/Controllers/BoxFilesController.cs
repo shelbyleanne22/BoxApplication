@@ -2,25 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BoxApplication.Models;
-using Box.V2.JWTAuth;
 using Box.V2.Config;
+using System.IO;
+using Box.V2.JWTAuth;
 using Box.V2.Models;
+using Box.V2;
 
 namespace BoxApplication.Controllers
 {
-    public class BoxUsersController : Controller
+    public class BoxFilesController : Controller
     {
         private readonly BoxApplicationContext _context;
         private Box.V2.BoxClient boxclient;
         private readonly string workingDirectory = Environment.CurrentDirectory;
-
-        //Stub for when we can test active directory calls
-        private List<string> inactiveusers = new List<string> { "testuser1@domain.edu", "testuser2@domain.edu" };
 
         public Box.V2.BoxClient BoxConnection()
         {
@@ -41,96 +39,102 @@ namespace BoxApplication.Controllers
             return client;
         }
 
-        public BoxUsersController(BoxApplicationContext context)
+        public BoxFilesController(BoxApplicationContext context)
         {
             _context = context;
             boxclient = BoxConnection();
         }
 
-        // GET: BoxUsers
+
+
+        // GET: BoxFiles
         public async Task<IActionResult> Index()
         {
-            //var boxApplicationContext = _context.BoxUser.Include(b => b.BoxEmail);
-            //return View(await boxApplicationContext.ToListAsync());
-            BoxCollection<Box.V2.Models.BoxUser> users = await boxclient.UsersManager.GetEnterpriseUsersAsync();
-            IEnumerable<Box.V2.Models.BoxUser> usersdisplay = users.Entries.Where(item => inactiveusers.Contains(item.Login));
-            return View(usersdisplay);
+            //list for our database
+            List<Models.BoxFile> adminObjects = new List<Models.BoxFile>();
+            List<string> serviceAccounts = new List<string>();
+            serviceAccounts.Add("242840337");
+
+            BoxCollection<BoxItem> results = await boxclient.SearchManager.SearchAsync("", ownerUserIds: serviceAccounts);
+
+            List<BoxItem> boxFolderItemsList = results.Entries;
+
+            foreach (BoxItem item in boxFolderItemsList)
+            {
+                Models.BoxFile boxObject = new Models.BoxFile();
+                boxObject.BoxFileID = item.Id;
+                boxObject.BoxFileName = item.Name;
+                boxObject.BoxFileType = item.Type;
+                adminObjects.Add(boxObject);
+            }
+
+            return View(adminObjects);
         }
 
-        public async Task<IActionResult> RemoveInactiveAccounts()
-        {
-            var boxApplicationContext = _context.BoxUser.Include(b => b.BoxEmail);
-            return View(await boxApplicationContext.ToListAsync());
-        }
-
-        // GET: BoxUsers/Details/5
+        // GET: BoxFiles/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null)
+            if (id.Equals(null))
             {
                 return NotFound();
             }
 
-            var boxUser = await _context.BoxUser
-                .Include(b => b.BoxEmail)
-                .FirstOrDefaultAsync(m => m.BoxID == id);
-            if (boxUser == null)
+            var boxFile = await _context.BoxFile
+                .FirstOrDefaultAsync(m => m.BoxFileID.Equals(id));
+            if (boxFile == null)
             {
                 return NotFound();
             }
 
-            return View(boxUser);
+            return View(boxFile);
         }
 
-        // GET: BoxUsers/Create
+        // GET: BoxFiles/Create
         public IActionResult Create()
         {
-            ViewData["BoxADForeignKey"] = new SelectList(_context.ActiveDirectoryUser, "ADEmail", "ADEmail");
             return View();
         }
 
-        // POST: BoxUsers/Create
+        // POST: BoxFiles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BoxID,BoxADForeignKey,BoxName,BoxLogin,BoxSpaceUsed,BoxStatus,BoxDateCreated,BoxDateModified")] Models.BoxUser boxUser)
+        public async Task<IActionResult> Create([Bind("BoxFileID,BoxFileType,BoxFileName")] Models.BoxFile boxFile)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(boxUser);
+                _context.Add(boxFile);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BoxADForeignKey"] = new SelectList(_context.ActiveDirectoryUser, "ADEmail", "ADEmail", boxUser.BoxADForeignKey);
-            return View(boxUser);
+            return View(boxFile);
         }
 
-        // GET: BoxUsers/Edit/5
+        // GET: BoxFiles/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null)
+            if (id.Equals(null))
             {
                 return NotFound();
             }
 
-            var boxUser = await _context.BoxUser.FindAsync(id);
-            if (boxUser == null)
+            var boxFile = await _context.BoxFile.FindAsync(id);
+            if (boxFile == null)
             {
                 return NotFound();
             }
-            ViewData["BoxADForeignKey"] = new SelectList(_context.ActiveDirectoryUser, "ADEmail", "ADEmail", boxUser.BoxADForeignKey);
-            return View(boxUser);
+            return View(boxFile);
         }
 
-        // POST: BoxUsers/Edit/5
+        // POST: BoxFiles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BoxID,BoxADForeignKey,BoxName,BoxLogin,BoxSpaceUsed,BoxStatus,BoxDateCreated,BoxDateModified")] Models.BoxUser boxUser)
+        public async Task<IActionResult> Edit(string id, [Bind("BoxFileID,BoxFileType,BoxFileName")] Models.BoxFile boxFile)
         {
-            if (id != boxUser.BoxID)
+            if (!id.Equals(boxFile.BoxFileID))
             {
                 return NotFound();
             }
@@ -139,12 +143,12 @@ namespace BoxApplication.Controllers
             {
                 try
                 {
-                    _context.Update(boxUser);
+                    _context.Update(boxFile);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BoxUserExists(boxUser.BoxID))
+                    if (!BoxFileExists(boxFile.BoxFileID))
                     {
                         return NotFound();
                     }
@@ -155,11 +159,10 @@ namespace BoxApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BoxADForeignKey"] = new SelectList(_context.ActiveDirectoryUser, "ADEmail", "ADEmail", boxUser.BoxADForeignKey);
-            return View(boxUser);
+            return View(boxFile);
         }
 
-        // GET: BoxUsers/Delete/5
+        // GET: BoxFiles/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -167,31 +170,30 @@ namespace BoxApplication.Controllers
                 return NotFound();
             }
 
-            var boxUser = await _context.BoxUser
-                .Include(b => b.BoxEmail)
-                .FirstOrDefaultAsync(m => m.BoxID == id);
-            if (boxUser == null)
+            var boxFile = await _context.BoxFile
+                .FirstOrDefaultAsync(m => m.BoxFileID.Equals(id));
+            if (boxFile == null)
             {
                 return NotFound();
             }
 
-            return View(boxUser);
+            return View(boxFile);
         }
 
-        // POST: BoxUsers/Delete/5
+        // POST: BoxFiles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var boxUser = await _context.BoxUser.FindAsync(id);
-            _context.BoxUser.Remove(boxUser);
+            var boxFile = await _context.BoxFile.FindAsync(id);
+            _context.BoxFile.Remove(boxFile);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BoxUserExists(string id)
+        private bool BoxFileExists(string id)
         {
-            return _context.BoxUser.Any(e => e.BoxID == id);
+            return _context.BoxFile.Any(e => e.BoxFileID.Equals(id));
         }
     }
 }
