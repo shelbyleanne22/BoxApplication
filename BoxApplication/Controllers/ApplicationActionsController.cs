@@ -178,8 +178,8 @@ namespace BoxApplication.Controllers
                                       && (objectModified == null     || action.ApplicationActionObjectModified.ToLower().Contains(objectModified))
                                       && (startDateTime  == nullDate || action.ApplicationActionDate >= startDateTime)
                                       && (endDateTime    == nullDate || action.ApplicationActionDate <= endDateTime)
-
                                 select action;
+
             var searchResultsList = searchResults.ToList();
 
             return View(searchResultsList);
