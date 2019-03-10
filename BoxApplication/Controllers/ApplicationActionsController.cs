@@ -171,13 +171,13 @@ namespace BoxApplication.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Search(string type, string description, string objectModified, DateTime startDate, DateTime endDate)
         {
-            DateTime nullDate = new DateTime(); // Date if user leaves date fields blank
+            DateTime nullDate = new DateTime(); // Date if user leaves a date field blank
             var searchResults = from action in _context.Action
-                                where (type == null || action.ApplicationActionType.ToLower().Contains(type))
-                                      && (description == null || action.ApplicationActionDescription.ToLower().Contains(description))
-                                      && (objectModified == null || action.ApplicationActionObjectModified.ToLower().Contains(objectModified))
-                                      && (startDate == nullDate || action.ApplicationActionDate >= startDate)
-                                      && (endDate == nullDate || action.ApplicationActionDate <= endDate)
+                                where    (type           == null     || action.ApplicationActionType.ToLower().Contains(type))
+                                      && (description    == null     || action.ApplicationActionDescription.ToLower().Contains(description))
+                                      && (objectModified == null     || action.ApplicationActionObjectModified.ToLower().Contains(objectModified))
+                                      && (startDate      == nullDate || action.ApplicationActionDate >= startDate)
+                                      && (endDate        == nullDate || action.ApplicationActionDate <= endDate)
 
                                 select action;
             var searchResultsList = searchResults.ToList();

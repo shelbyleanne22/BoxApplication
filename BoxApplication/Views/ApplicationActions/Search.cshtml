@@ -16,7 +16,7 @@
             <div class="form-group">
                 <label asp-for="FirstOrDefault().ApplicationActionType" class="control-label"></label>
                 <input name="type" class="form-control" />
-                <span asp-validation-for="First().ApplicationActionType" class="text-danger"></span>
+                <span asp-validation-for="FirstOrDefault().ApplicationActionType" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FirstOrDefault().ApplicationActionDescription" class="control-label"></label>
@@ -45,61 +45,51 @@
     </div>
 </div>
 
-@if (Model.Count() > 0)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.ApplicationActionADUser)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ApplicationActionType)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ApplicationActionDescription)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ApplicationActionObjectModified)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ApplicationActionDate)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                @if (item.ApplicationActionType != null)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ApplicationActionADUser.ADEmail)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ApplicationActionType)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ApplicationActionDescription)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ApplicationActionObjectModified)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ApplicationActionDate)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.ApplicationActionID">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ApplicationActionID">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ApplicationActionID">Delete</a>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
-}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationActionADUser)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationActionType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationActionDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationActionObjectModified)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationActionDate)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+         
+           <tr>
+               <td>
+                   @Html.DisplayFor(modelItem => item.ApplicationActionADUser.ADEmail)
+               </td>
+               <td>
+                   @Html.DisplayFor(modelItem => item.ApplicationActionType)
+               </td>
+               <td>
+                   @Html.DisplayFor(modelItem => item.ApplicationActionDescription)
+               </td>
+               <td>
+                   @Html.DisplayFor(modelItem => item.ApplicationActionObjectModified)
+               </td>
+               <td>
+                   @Html.DisplayFor(modelItem => item.ApplicationActionDate)
+               </td>
+           </tr>
+         
+        }
+    </tbody>
+</table>
 
 <div>
     <a asp-action="Index">Back to List</a>
