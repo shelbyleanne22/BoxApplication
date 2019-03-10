@@ -157,22 +157,10 @@ namespace BoxApplication.Controllers
             return _context.Action.Any(e => e.ApplicationActionID == id);
         }
 
-
-
-
-
-
-
-        // Search stuff
-
-
         // GET: ApplicationActions/Search
         public IActionResult Search()
         {
-            var list = new List<ApplicationAction>
-            {
-                new ApplicationAction()
-            };
+            var list = new List<ApplicationAction>();
             return View(list);
         }
 
@@ -181,15 +169,18 @@ namespace BoxApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Search([Bind("ApplicationActionID,ApplicationActionADForeignKey,ApplicationActionType,ApplicationActionDescription,ApplicationActionObjectModified,ApplicationActionDate")] ApplicationAction actionSearch)
+        public IActionResult Search(string type, string description, string objectModified, DateTime startDate, DateTime endDate)
         {
+            DateTime nullDate = new DateTime(); // Date if user leaves date fields blank
             var searchResults = from action in _context.Action
-                                where (actionSearch.ApplicationActionType              == null || action.ApplicationActionType.ToLower().Contains(actionSearch.ApplicationActionType.ToLower()))
-                                      && (actionSearch.ApplicationActionDescription    == null || action.ApplicationActionDescription.ToLower().Contains(actionSearch.ApplicationActionDescription.ToLower()))
-                                      && (actionSearch.ApplicationActionObjectModified == null || action.ApplicationActionObjectModified.ToLower().Contains(actionSearch.ApplicationActionObjectModified.ToLower()))
+                                where (type == null || action.ApplicationActionType.ToLower().Contains(type))
+                                      && (description == null || action.ApplicationActionDescription.ToLower().Contains(description))
+                                      && (objectModified == null || action.ApplicationActionObjectModified.ToLower().Contains(objectModified))
+                                      && (startDate == nullDate || action.ApplicationActionDate >= startDate)
+                                      && (endDate == nullDate || action.ApplicationActionDate <= endDate)
+
                                 select action;
             var searchResultsList = searchResults.ToList();
-            searchResultsList.Insert(0, new ApplicationAction());
 
             return View(searchResultsList);
         }

@@ -14,19 +14,29 @@
         <form asp-action="Search">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="First().ApplicationActionType" class="control-label"></label>
-                <input asp-for="First().ApplicationActionType" class="form-control" />
+                <label asp-for="FirstOrDefault().ApplicationActionType" class="control-label"></label>
+                <input name="type" class="form-control" />
                 <span asp-validation-for="First().ApplicationActionType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="First().ApplicationActionDescription" class="control-label"></label>
-                <input asp-for="First().ApplicationActionDescription" class="form-control" />
-                <span asp-validation-for="First().ApplicationActionDescription" class="text-danger"></span>
+                <label asp-for="FirstOrDefault().ApplicationActionDescription" class="control-label"></label>
+                <input name="description" class="form-control" />
+                <span asp-validation-for="FirstOrDefault().ApplicationActionDescription" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="First().ApplicationActionObjectModified" class="control-label"></label>
-                <input asp-for="First().ApplicationActionObjectModified" class="form-control" />
-                <span asp-validation-for="First().ApplicationActionObjectModified" class="text-danger"></span>
+                <label asp-for="FirstOrDefault().ApplicationActionObjectModified" class="control-label"></label>
+                <input name="objectModified" class="form-control" />
+                <span asp-validation-for="FirstOrDefault().ApplicationActionObjectModified" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Start date and time</label>
+                <input name="startDate" type="datetime-local" class="form-control" />
+                <span asp-validation-for="FirstOrDefault().ApplicationActionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">End date and time</label>
+                <input name="endDate" type="datetime-local" class="form-control" />
+                <span asp-validation-for="FirstOrDefault().ApplicationActionDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Search" class="btn btn-primary" />
@@ -35,7 +45,7 @@
     </div>
 </div>
 
-@if (Model.Count() > 1)
+@if (Model.Count() > 0)
 {
     <table class="table">
         <thead>
