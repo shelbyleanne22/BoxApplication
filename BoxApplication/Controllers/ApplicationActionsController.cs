@@ -169,15 +169,15 @@ namespace BoxApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Search(string type, string description, string objectModified, DateTime startDate, DateTime endDate)
+        public IActionResult Search(string type, string description, string objectModified, DateTime startDateTime, DateTime endDateTime)
         {
             DateTime nullDate = new DateTime(); // Date if user leaves a date field blank
             var searchResults = from action in _context.Action
                                 where    (type           == null     || action.ApplicationActionType.ToLower().Contains(type))
                                       && (description    == null     || action.ApplicationActionDescription.ToLower().Contains(description))
                                       && (objectModified == null     || action.ApplicationActionObjectModified.ToLower().Contains(objectModified))
-                                      && (startDate      == nullDate || action.ApplicationActionDate >= startDate)
-                                      && (endDate        == nullDate || action.ApplicationActionDate <= endDate)
+                                      && (startDateTime  == nullDate || action.ApplicationActionDate >= startDateTime)
+                                      && (endDateTime    == nullDate || action.ApplicationActionDate <= endDateTime)
 
                                 select action;
             var searchResultsList = searchResults.ToList();
