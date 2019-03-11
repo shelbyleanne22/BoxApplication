@@ -32,7 +32,7 @@ namespace BoxApplication.Controllers
 
             string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu";
             //CN = sccs,CN = students, /DC=mcghi,DC=mcg,DC=edu/
-            string username = "";
+            string username = "ajarnagi";
             string password = "";
 
 
@@ -125,7 +125,8 @@ namespace BoxApplication.Controllers
         public async Task<List<BoxUsers>> GetInactiveUsers()
         {
             List<BoxUsers> users = await _context.BoxUsers.ToListAsync();
-            List<BoxUsers> inactiveboxusers = users.Where(item => inactiveusersstub.Contains(item.Login)).ToList();
+            List<BoxUsers> inactiveboxusers = _context.BoxUsers.Where(item => GetInactiveAD().Contains(item.Login)).ToList();
+            //List<BoxUsers> inactiveboxusers = users.Where(item => inactiveusersstub.Contains(item.Login)).ToList();
             return (inactiveboxusers);
         }
 
