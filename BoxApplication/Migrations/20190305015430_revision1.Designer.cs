@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    [Migration("20190215024831_Initial")]
-    partial class Initial
+    [Migration("20190305015430_revision1")]
+    partial class revision1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,6 +37,42 @@ namespace BoxApplication.Migrations
                     b.HasKey("ADEmail");
 
                     b.ToTable("ActiveDirectoryUser");
+                });
+
+            modelBuilder.Entity("BoxApplication.Models.ApplicationAction", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("Type");
+
+                    b.Property<string>("User");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Action");
+                });
+
+            modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>
+                {
+                    b.Property<string>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
+
+                    b.Property<string>("Login");
+
+                    b.Property<string>("Name");
+
+                    b.Property<long>("SpaceUsed");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("BoxUsersList");
                 });
 #pragma warning restore 612, 618
         }

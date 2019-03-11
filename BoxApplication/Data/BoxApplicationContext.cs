@@ -14,10 +14,10 @@ namespace BoxApplication.Models
         {
         }
 
-        public DbSet<BoxApplication.Models.ActiveDirectoryUser> ActiveDirectoryUser { get; set; }
+        public DbSet<BoxApplication.Models.ActiveDirectoryUser> ActiveDirectoryUsers { get; set; }
 
-        public DbSet<BoxApplication.Models.ApplicationAction> Action { get; set; }
+        public DbSet<BoxApplication.Models.ApplicationAction> ApplicationActions { get; set; }
 
-        public DbSet<BoxApplication.Models.BoxUser> BoxUser { get; set; }
+        public DbSet<BoxApplication.Models.BoxUsers> BoxUsers { get; set; }
     }
 }

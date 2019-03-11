@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    [Migration("20190215031056_InitialRedone")]
-    partial class InitialRedone
+    [Migration("20190307014611_ChangedADProperties")]
+    partial class ChangedADProperties
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,7 +26,7 @@ namespace BoxApplication.Migrations
                     b.Property<string>("ADEmail")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("ADDateInactive");
+                    b.Property<DateTime>("ADDateModified");
 
                     b.Property<string>("ADFirstName");
 
