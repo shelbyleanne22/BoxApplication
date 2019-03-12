@@ -28,11 +28,7 @@ namespace BoxApplication.Controllers
         // GET: ApplicationActions/Search
         public IActionResult Search()
         {
-            var list = new List<ApplicationAction>
-            {
-                new ApplicationAction()
-            };
-            return View(list);
+            return View(new List<ApplicationAction>());
         }
 
         // POST: ApplicationActions/Search
@@ -40,16 +36,17 @@ namespace BoxApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Search([Bind("ID,Type,User,Date")] ApplicationAction actionSearch)
+        public IActionResult Search(string type, string user, DateTime startDateTime, DateTime endDateTime)
         {
+            DateTime nullDateTime = new DateTime();
             var searchResults = from action in _context.ApplicationActions
-                                where (actionSearch.Type              == null || action.Type.ToLower().Contains(actionSearch.Type.ToLower()))
-                                      && (actionSearch.User    == null || action.User.ToLower().Contains(actionSearch.User.ToLower()))
+                                where    (type == null || action.Type.ToLower().Contains(type))
+                                      && (user == null || action.Type.ToLower().Contains(user))
+                                      && (startDateTime == nullDateTime || startDateTime <= action.Date)
+                                      && (endDateTime   == nullDateTime || endDateTime   >= action.Date)
                                 select action;
-            var searchResultsList = searchResults.ToList();
-            searchResultsList.Insert(0, new ApplicationAction());
 
-            return View(searchResultsList);
+            return View(searchResults.ToList());
         }
 
     }
