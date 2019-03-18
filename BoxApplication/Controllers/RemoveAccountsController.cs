@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BoxApplication.Models;
+using BoxApplication.Controllers;
 using Box.V2.JWTAuth;
 using Box.V2.Config;
 using Box.V2.Models;
@@ -118,7 +119,7 @@ namespace BoxApplication.Controllers
         public RemoveAccountsController(BoxApplicationContext context)
         {
             _context = context;
-            boxclient = BoxConnection();
+           ConnectionExtensions ext = new ConnectionExtensions(_context);
         }
 
         public async Task<List<BoxUsers>> GetInactiveUsers()
