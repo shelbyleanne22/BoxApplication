@@ -11,8 +11,11 @@ namespace BoxApplication.Models
     public class BoxUsers
     {
         [Key]
-        [DisplayName("ID")]
+        [DisplayName("Box ID")]
         public string ID { get; set; }
+
+        [DisplayName("Active Directroy ID")]
+        public string ADGUID { get; set; }
 
         [DisplayName("Name")]
         public string Name { get; set; }
@@ -28,5 +31,8 @@ namespace BoxApplication.Models
 
         [DisplayName("Date Modified")]
         public DateTime DateModified { get; set; }
+
+        [ForeignKey("ADGUID")]
+        public ActiveDirectoryUser Owner { get; set; }
     }
 }

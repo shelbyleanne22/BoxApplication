@@ -22,7 +22,14 @@ namespace BoxApplication.Controllers
         }
 
         // GET: ActiveDirectoryUsers
+
         public async Task<IActionResult> Index()
+        {
+            await UpdateADTable();
+            return View(await _context.ActiveDirectoryUsers.ToListAsync());
+        }
+
+        public async Task UpdateADTable()
         {
             List<ActiveDirectoryUser> inactiveADusers = new List<ActiveDirectoryUser>();
 
@@ -31,179 +38,54 @@ namespace BoxApplication.Controllers
             string username = "";
             string password = "";
 
-           
+
 
             //creates directoryentry object that binds the instance to the domain path
             DirectoryEntry searchRoot = new DirectoryEntry(DomainPath, username, password, AuthenticationTypes.Secure);
             //creates a directorysearcher object which searches for all users in the domain
             DirectorySearcher search = new DirectorySearcher(searchRoot);
             //filters the search to only inactive/disabled accounts
-            search.Filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))";
+            search.Filter = "(&(objectCategory=person)(objectClass=user))";
+            search.PropertiesToLoad.Add("objectguid");
             search.PropertiesToLoad.Add("samaccountname");
             search.PropertiesToLoad.Add("mail");
             search.PropertiesToLoad.Add("displayname");
             search.PropertiesToLoad.Add("whenchanged");
+            search.PropertiesToLoad.Add("useraccountcontrol");
 
             SearchResult result;
             SearchResultCollection resultCol = search.FindAll();
 
-
-            //displays and redirects if no inactive accounts are found
-            if (resultCol.Count.Equals(0))
+            for (int counter = 0; counter < resultCol.Count; counter++)
             {
-                //for production
-                ModelState.AddModelError("Error", "No inactive accounts exist.");
-            }
-            else
-            {
-                for (int counter = 0; counter < resultCol.Count; counter++)
+                string UserNameEmailString = string.Empty;
+                result = resultCol[counter];
+                if (result.Properties.Contains("samaccountname") &&
+                            result.Properties.Contains("mail") &&
+                    result.Properties.Contains("displayname"))
                 {
-                    string UserNameEmailString = string.Empty;
-                    result = resultCol[counter];
-                    if (result.Properties.Contains("samaccountname") &&
-                             result.Properties.Contains("mail") &&
-                        result.Properties.Contains("displayname"))
+                    ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
+                    activeDirectoryUser.ADGUID = (String)result.Properties["objectguid"][0];
+                    activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
+                    activeDirectoryUser.ADFirstName = (String)result.Properties["displayname"][0];
+                    activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
+                    activeDirectoryUser.ADDateModified = (DateTime)result.Properties["whenchanged"][0];
+                    if ((int)result.Properties["useraccountcontrol"][0] == 2)
+                        activeDirectoryUser.ADStatus = "Active";
+                    else
+                        activeDirectoryUser.ADStatus = "Inactive";
+
+                    if (_context.ActiveDirectoryUsers.Any(o => o.ADGUID == activeDirectoryUser.ADGUID))
                     {
-                        ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
-                        activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
-                        activeDirectoryUser.ADFirstName = (String)result.Properties["displayname"][0];
-                        activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
-                        activeDirectoryUser.ADDateModified = (DateTime)result.Properties["whenchanged"][0];
-                        activeDirectoryUser.ADStatus = "INACTIVE";
-                        inactiveADusers.Add(activeDirectoryUser);
-                    }
-                }
-
-            }
-
-            return View(inactiveADusers);
-        }
-
-        // GET: ActiveDirectoryUsers/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var activeDirectoryUser = await _context.ActiveDirectoryUsers
-                .FirstOrDefaultAsync(m => m.ADEmail == id);
-            if (activeDirectoryUser == null)
-            {
-                return NotFound();
-            }
-
-            return View(activeDirectoryUser);
-        }
-
-        // GET: ActiveDirectoryUsers/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ActiveDirectoryUsers/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ADEmail,ADUsername,ADFirstName,ADStatus,ADDateModified")] ActiveDirectoryUser activeDirectoryUser)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(activeDirectoryUser);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(activeDirectoryUser);
-        }
-
-        // GET: ActiveDirectoryUsers/Edit/5
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var activeDirectoryUser = await _context.ActiveDirectoryUsers.FindAsync(id);
-            if (activeDirectoryUser == null)
-            {
-                return NotFound();
-            }
-            return View(activeDirectoryUser);
-        }
-
-        // POST: ActiveDirectoryUsers/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ADEmail,ADUsername,ADFirstName,ADStatus,ADDateModified")] ActiveDirectoryUser activeDirectoryUser)
-        {
-            if (id != activeDirectoryUser.ADEmail)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(activeDirectoryUser);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ActiveDirectoryUserExists(activeDirectoryUser.ADEmail))
-                    {
-                        return NotFound();
+                        if (!_context.ActiveDirectoryUsers.Contains(activeDirectoryUser))
+                            _context.ActiveDirectoryUsers.Update(activeDirectoryUser);
                     }
                     else
-                    {
-                        throw;
-                    }
+                        _context.ActiveDirectoryUsers.Add(activeDirectoryUser);
+                    await _context.SaveChangesAsync();
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(activeDirectoryUser);
         }
-
-        // GET: ActiveDirectoryUsers/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var activeDirectoryUser = await _context.ActiveDirectoryUsers
-                .FirstOrDefaultAsync(m => m.ADEmail == id);
-            if (activeDirectoryUser == null)
-            {
-                return NotFound();
-            }
-
-            return View(activeDirectoryUser);
-        }
-
-        // POST: ActiveDirectoryUsers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var activeDirectoryUser = await _context.ActiveDirectoryUsers.FindAsync(id);
-            _context.ActiveDirectoryUsers.Remove(activeDirectoryUser);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ActiveDirectoryUserExists(string id)
-        {
-            return _context.ActiveDirectoryUsers.Any(e => e.ADEmail == id);
-        }
-
 
     }
 }

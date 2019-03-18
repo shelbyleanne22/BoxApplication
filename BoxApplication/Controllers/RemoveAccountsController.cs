@@ -43,6 +43,7 @@ namespace BoxApplication.Controllers
             DirectorySearcher search = new DirectorySearcher(searchRoot);
             //filters the search to only inactive/disabled accounts
             search.Filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))";
+            search.PropertiesToLoad.Add("objectguid");
             search.PropertiesToLoad.Add("samaccountname");
             search.PropertiesToLoad.Add("mail");
             search.PropertiesToLoad.Add("displayname");
@@ -108,9 +109,7 @@ namespace BoxApplication.Controllers
                 newUser.DateModified = user.ModifiedAt.Value;
                 newUser.DateCreated = user.CreatedAt.Value;
                 newUser.SpaceUsed = user.SpaceUsed.Value;
-                if (_context.BoxUsers.Any(x => x == newUser))
-                    _context.BoxUsers.Update(newUser);
-                else
+                if (!_context.BoxUsers.Any(x => x.ID == newUser.ID))
                     _context.BoxUsers.Add(newUser);
                 await _context.SaveChangesAsync();
             }
@@ -125,7 +124,8 @@ namespace BoxApplication.Controllers
         public async Task<List<BoxUsers>> GetInactiveUsers()
         {
             List<BoxUsers> users = await _context.BoxUsers.ToListAsync();
-            List<BoxUsers> inactiveboxusers = _context.BoxUsers.Where(item => GetInactiveAD().Contains(item.Login)).ToList();
+            List<string> inactiveadusers = GetInactiveAD();
+            List<BoxUsers> inactiveboxusers = _context.BoxUsers.Where(item => inactiveadusers.Contains(item.Login)).ToList();
             //List<BoxUsers> inactiveboxusers = users.Where(item => inactiveusersstub.Contains(item.Login)).ToList();
             return (inactiveboxusers);
         }
