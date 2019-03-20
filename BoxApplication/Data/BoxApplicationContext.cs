@@ -19,5 +19,7 @@ namespace BoxApplication.Models
         public DbSet<BoxApplication.Models.ApplicationAction> ApplicationActions { get; set; }
 
         public DbSet<BoxApplication.Models.BoxUsers> BoxUsers { get; set; }
+
+        public DbSet<BoxApplication.Models.BoxADUpdate> BoxADUpdates { get; set; }
     }
 }

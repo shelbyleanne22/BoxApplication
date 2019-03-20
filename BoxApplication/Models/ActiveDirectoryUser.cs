@@ -25,6 +25,28 @@ namespace BoxApplication.Models
 
         [DisplayName("Date Last Modified")]
         public DateTime ADDateModified { get; set; }
+
+        //equals method for comparing AD and Box Users in context
+        public string NeedsUpdate(object ad, object box)
+        {
+            var activeDirectoryUser = ad as ActiveDirectoryUser;
+            var boxUser = box as BoxUsers;
+
+            if (activeDirectoryUser.ADEmail != boxUser.Login)
+            {
+                return "ADEmail";
+            }
+            else if (activeDirectoryUser.ADFirstName != boxUser.Name)
+            {
+                return "ADFirstName";
+            }
+            else
+            {
+                return "";
+            }
+
+        }
     }
+
 }
 

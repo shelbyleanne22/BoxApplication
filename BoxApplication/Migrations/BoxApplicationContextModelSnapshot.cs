@@ -53,6 +53,30 @@ namespace BoxApplication.Migrations
                     b.ToTable("ApplicationActions");
                 });
 
+            modelBuilder.Entity("BoxApplication.Models.BoxADUpdate", b =>
+                {
+                    b.Property<Guid>("BoxADUpdateID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ADFieldChanged");
+
+                    b.Property<string>("ADNewData");
+
+                    b.Property<string>("ADUserADEmail");
+
+                    b.Property<string>("BoxPreviousData");
+
+                    b.Property<bool>("UpdateBoxOption");
+
+                    b.Property<Guid>("UserID");
+
+                    b.HasKey("BoxADUpdateID");
+
+                    b.HasIndex("ADUserADEmail");
+
+                    b.ToTable("BoxADUpdates");
+                });
+
             modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>
                 {
                     b.Property<string>("ID")
@@ -71,6 +95,13 @@ namespace BoxApplication.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("BoxUsers");
+                });
+
+            modelBuilder.Entity("BoxApplication.Models.BoxADUpdate", b =>
+                {
+                    b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "ADUser")
+                        .WithMany()
+                        .HasForeignKey("ADUserADEmail");
                 });
 #pragma warning restore 612, 618
         }

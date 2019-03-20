@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    [Migration("20190305015430_revision1")]
-    partial class revision1
+    [Migration("20190320000942_AddedBoxADUpdateTable")]
+    partial class AddedBoxADUpdateTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,7 +26,7 @@ namespace BoxApplication.Migrations
                     b.Property<string>("ADEmail")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("ADDateInactive");
+                    b.Property<DateTime>("ADDateModified");
 
                     b.Property<string>("ADFirstName");
 
@@ -36,7 +36,7 @@ namespace BoxApplication.Migrations
 
                     b.HasKey("ADEmail");
 
-                    b.ToTable("ActiveDirectoryUser");
+                    b.ToTable("ActiveDirectoryUsers");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.ApplicationAction", b =>
@@ -52,7 +52,31 @@ namespace BoxApplication.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Action");
+                    b.ToTable("ApplicationActions");
+                });
+
+            modelBuilder.Entity("BoxApplication.Models.BoxADUpdate", b =>
+                {
+                    b.Property<Guid>("BoxADUpdateID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ADFieldChanged");
+
+                    b.Property<string>("ADNewData");
+
+                    b.Property<string>("ADUserADEmail");
+
+                    b.Property<string>("BoxPreviousData");
+
+                    b.Property<bool>("UpdateBoxOption");
+
+                    b.Property<Guid>("UserID");
+
+                    b.HasKey("BoxADUpdateID");
+
+                    b.HasIndex("ADUserADEmail");
+
+                    b.ToTable("BoxADUpdates");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>
@@ -72,7 +96,14 @@ namespace BoxApplication.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("BoxUsersList");
+                    b.ToTable("BoxUsers");
+                });
+
+            modelBuilder.Entity("BoxApplication.Models.BoxADUpdate", b =>
+                {
+                    b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "ADUser")
+                        .WithMany()
+                        .HasForeignKey("ADUserADEmail");
                 });
 #pragma warning restore 612, 618
         }
