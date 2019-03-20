@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    [Migration("20190320000942_AddedBoxADUpdateTable")]
-    partial class AddedBoxADUpdateTable
+    [Migration("20190320221218_test2")]
+    partial class test2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,10 +23,12 @@ namespace BoxApplication.Migrations
 
             modelBuilder.Entity("BoxApplication.Models.ActiveDirectoryUser", b =>
                 {
-                    b.Property<string>("ADEmail")
+                    b.Property<byte[]>("ADGUID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("ADDateModified");
+
+                    b.Property<string>("ADEmail");
 
                     b.Property<string>("ADFirstName");
 
@@ -34,7 +36,7 @@ namespace BoxApplication.Migrations
 
                     b.Property<string>("ADUsername");
 
-                    b.HasKey("ADEmail");
+                    b.HasKey("ADGUID");
 
                     b.ToTable("ActiveDirectoryUsers");
                 });
@@ -64,7 +66,7 @@ namespace BoxApplication.Migrations
 
                     b.Property<string>("ADNewData");
 
-                    b.Property<string>("ADUserADEmail");
+                    b.Property<byte[]>("ADUserADGUID");
 
                     b.Property<string>("BoxPreviousData");
 
@@ -74,7 +76,7 @@ namespace BoxApplication.Migrations
 
                     b.HasKey("BoxADUpdateID");
 
-                    b.HasIndex("ADUserADEmail");
+                    b.HasIndex("ADUserADGUID");
 
                     b.ToTable("BoxADUpdates");
                 });
@@ -83,6 +85,10 @@ namespace BoxApplication.Migrations
                 {
                     b.Property<string>("ID")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<byte[]>("ADGUID");
+
+                    b.Property<bool>("Active");
 
                     b.Property<DateTime>("DateCreated");
 
@@ -96,6 +102,8 @@ namespace BoxApplication.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ADGUID");
+
                     b.ToTable("BoxUsers");
                 });
 
@@ -103,7 +111,14 @@ namespace BoxApplication.Migrations
                 {
                     b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "ADUser")
                         .WithMany()
-                        .HasForeignKey("ADUserADEmail");
+                        .HasForeignKey("ADUserADGUID");
+                });
+
+            modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>
+                {
+                    b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "aduser")
+                        .WithMany()
+                        .HasForeignKey("ADGUID");
                 });
 #pragma warning restore 612, 618
         }

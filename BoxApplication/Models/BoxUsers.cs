@@ -14,6 +14,9 @@ namespace BoxApplication.Models
         [DisplayName("ID")]
         public string ID { get; set; }
 
+        [DisplayName("AD Guid")]
+        public Byte[] ADGUID { get; set; }
+
         [DisplayName("Name")]
         public string Name { get; set; }
 
@@ -28,5 +31,11 @@ namespace BoxApplication.Models
 
         [DisplayName("Date Modified")]
         public DateTime DateModified { get; set; }
+
+        [DisplayName("Current Status")]
+        public bool Active { get; set; }
+
+        [ForeignKey("ADGUID")]
+        public ActiveDirectoryUser aduser { get; set; }
     }
 }

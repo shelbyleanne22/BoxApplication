@@ -10,6 +10,9 @@ namespace BoxApplication.Models
     public class ActiveDirectoryUser
     {
         [Key]
+        [DisplayName("AD Guid")]
+        public Byte[] ADGUID { get; set; }
+
         [DisplayName("AD Email")]
         [DataType(DataType.EmailAddress)]
         public string ADEmail { get; set; }

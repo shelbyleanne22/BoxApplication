@@ -4,14 +4,16 @@ using BoxApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    partial class BoxApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20190320215211_test1")]
+    partial class test1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,8 +87,6 @@ namespace BoxApplication.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<byte[]>("ADGUID");
-
-                    b.Property<bool>("Active");
 
                     b.Property<DateTime>("DateCreated");
 
