@@ -41,7 +41,8 @@ namespace BoxApplication.Controllers
             {
                 foreach(var boxUser in boxUsers)
                 {
-                    if(adUser.NeedsUpdate(adUser, boxUser) == "ADEmail")
+                    string needUpdates = adUser.NeedsUpdate(adUser, boxUser);
+                    if (needUpdates.Equals("ADEmail"))
                     {
                         BoxADUpdate potentialUpdate = new BoxADUpdate();
                         potentialUpdate.ADUser = adUser;
@@ -49,22 +50,38 @@ namespace BoxApplication.Controllers
                         potentialUpdate.ADNewData = adUser.ADEmail;
                         potentialUpdate.BoxPreviousData = boxUser.Login;
                         potentialUpdate.UpdateBoxOption = false;
-                        //potentialUpdate.UserID = adUser.ADUserPrimaryKey;
+                        potentialUpdate.UserID = adUser.ADGUID;
                         
                         potentialUpdates.Add(potentialUpdate);
                     }
+                    else if(needUpdates.Equals("ADFirstName"))
+                    {
+                        BoxADUpdate potentialUpdate = new BoxADUpdate();
+                        potentialUpdate.ADUser = adUser;
+                        potentialUpdate.ADFieldChanged = "AD First Name";
+                        potentialUpdate.ADNewData = adUser.ADFirstName;
+                        potentialUpdate.BoxPreviousData = boxUser.Name;
+                        potentialUpdate.UpdateBoxOption = false;
+                        potentialUpdate.UserID = adUser.ADGUID;
+
+                        potentialUpdates.Add(potentialUpdate);
+                    }
+                    else if(needUpdates.Equals("InvalidSort"))
+                    {
+                        //display error
+                    }
+                    //else needUpdates.Equals("NoChange");
+                    //{
+                        //nothing
+                    //}
                 }
             }
 
             foreach(BoxADUpdate potentialUpdate in potentialUpdates)
             {
-                if (_context.BoxADUpdates.Any(x => x == potentialUpdate))
+                if (_context.BoxADUpdates.Any(x => x != potentialUpdate))
                 {
-                    //potentialUpdate.Status = "Ignore?";
-                    _context.BoxADUpdates.Update(potentialUpdate);
-                }
-                else
-                {
+                    //add to context if it does not already exist
                     _context.BoxADUpdates.Add(potentialUpdate);
                 }
             }     

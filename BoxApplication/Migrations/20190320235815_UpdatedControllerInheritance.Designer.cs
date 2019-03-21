@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    [Migration("20190320221218_test2")]
-    partial class test2
+    [Migration("20190320235815_UpdatedControllerInheritance")]
+    partial class UpdatedControllerInheritance
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

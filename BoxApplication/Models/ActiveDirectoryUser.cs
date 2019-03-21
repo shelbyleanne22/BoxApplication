@@ -34,18 +34,26 @@ namespace BoxApplication.Models
         {
             var activeDirectoryUser = ad as ActiveDirectoryUser;
             var boxUser = box as BoxUsers;
-
-            if (activeDirectoryUser.ADEmail != boxUser.Login)
+            
+            //checks that ad and box user guids are aligned
+            if(activeDirectoryUser.ADGUID == boxUser.ADGUID)
             {
-                return "ADEmail";
-            }
-            else if (activeDirectoryUser.ADFirstName != boxUser.Name)
-            {
-                return "ADFirstName";
+                if (activeDirectoryUser.ADEmail != boxUser.Login)
+                {
+                    return "ADEmail";
+                }
+                else if (activeDirectoryUser.ADFirstName != boxUser.Name)
+                {
+                    return "ADFirstName";
+                }
+                else
+                {
+                    return "NoChange";
+                }
             }
             else
             {
-                return "";
+                return "InvalidSort";
             }
 
         }

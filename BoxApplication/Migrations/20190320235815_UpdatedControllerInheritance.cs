@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BoxApplication.Migrations
 {
-    public partial class test1 : Migration
+    public partial class UpdatedControllerInheritance : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -70,7 +70,8 @@ namespace BoxApplication.Migrations
                     Login = table.Column<string>(nullable: true),
                     SpaceUsed = table.Column<long>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
-                    DateModified = table.Column<DateTime>(nullable: false)
+                    DateModified = table.Column<DateTime>(nullable: false),
+                    Active = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

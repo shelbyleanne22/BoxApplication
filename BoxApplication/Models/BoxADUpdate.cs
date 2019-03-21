@@ -14,7 +14,7 @@ namespace BoxApplication.Models
         public Guid BoxADUpdateID { get; set; }
 
         [ForeignKey("ActiveDirectoryUserID")]
-        public Guid UserID { get; set; }
+        public Byte[] UserID { get; set; }
 
         [DisplayName("Update Box Account?")]
         public bool UpdateBoxOption { get; set; }
