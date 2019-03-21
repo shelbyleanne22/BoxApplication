@@ -24,7 +24,6 @@ namespace BoxApplication.Controllers
             return View(await _context.ApplicationActions.ToListAsync());
         }
 
-        // Search stuff
         // GET: ApplicationActions/Search
         public IActionResult Search()
         {
