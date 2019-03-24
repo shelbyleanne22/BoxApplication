@@ -4,14 +4,16 @@ using BoxApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoxApplication.Migrations
 {
     [DbContext(typeof(BoxApplicationContext))]
-    partial class BoxApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20190324200424_ChangedFKs")]
+    partial class ChangedFKs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,17 +64,17 @@ namespace BoxApplication.Migrations
 
                     b.Property<string>("ADFieldChanged");
 
-                    b.Property<string>("ADNewData");
+                    b.Property<byte[]>("ADGUID");
 
-                    b.Property<string>("BoxID");
+                    b.Property<string>("ADNewData");
 
                     b.Property<string>("BoxPreviousData");
 
-                    b.Property<string>("BoxUserID");
+                    b.Property<bool>("UpdateBoxOption");
 
                     b.HasKey("BoxADUpdateID");
 
-                    b.HasIndex("BoxUserID");
+                    b.HasIndex("ADGUID");
 
                     b.ToTable("BoxADUpdates");
                 });
@@ -105,9 +107,9 @@ namespace BoxApplication.Migrations
 
             modelBuilder.Entity("BoxApplication.Models.BoxADUpdate", b =>
                 {
-                    b.HasOne("BoxApplication.Models.BoxUsers", "BoxUser")
+                    b.HasOne("BoxApplication.Models.ActiveDirectoryUser", "aduser")
                         .WithMany()
-                        .HasForeignKey("BoxUserID");
+                        .HasForeignKey("ADGUID");
                 });
 
             modelBuilder.Entity("BoxApplication.Models.BoxUsers", b =>

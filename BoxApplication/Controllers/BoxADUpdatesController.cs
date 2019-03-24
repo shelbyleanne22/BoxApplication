@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BoxApplication.Models;
+using Box.V2.Models;
 
 namespace BoxApplication.Controllers
 {
@@ -22,7 +23,7 @@ namespace BoxApplication.Controllers
         // GET: BoxADUpdates
         public async Task<IActionResult> Index()
         {
-            await UpdateADTable(_context);
+            //await UpdateADTable(_context);
             await UpdateBoxTable(_context);
             //creats list to hold all box users from context
             List<BoxUsers> boxUsers = _context.BoxUsers.ToList();
@@ -36,24 +37,22 @@ namespace BoxApplication.Controllers
                 if (boxUser.aduser.ADEmail != boxUser.Login)
                 {
                     BoxADUpdate potentialUpdate = new BoxADUpdate();
-                    potentialUpdate.ADUser = boxUser.aduser;
+                    potentialUpdate.BoxUser = boxUser;
                     potentialUpdate.ADFieldChanged = "AD Email";
                     potentialUpdate.ADNewData = boxUser.aduser.ADEmail;
                     potentialUpdate.BoxPreviousData = boxUser.Login;
-                    potentialUpdate.UpdateBoxOption = false;
-                    potentialUpdate.UserID = boxUser.aduser.ADGUID;
+                    potentialUpdate.BoxID = boxUser.ID;
 
                     potentialUpdates.Add(potentialUpdate);
                 }
                 else if (boxUser.aduser.ADFirstName != boxUser.Name)
                 {
                     BoxADUpdate potentialUpdate = new BoxADUpdate();
-                    potentialUpdate.ADUser = boxUser.aduser;
+                    potentialUpdate.BoxUser = boxUser;
                     potentialUpdate.ADFieldChanged = "AD First Name";
                     potentialUpdate.ADNewData = boxUser.aduser.ADFirstName;
                     potentialUpdate.BoxPreviousData = boxUser.Name;
-                    potentialUpdate.UpdateBoxOption = false;
-                    potentialUpdate.UserID = boxUser.ADGUID;
+                    potentialUpdate.BoxID = boxUser.ID;
                     potentialUpdates.Add(potentialUpdate);
                 }
                 else
@@ -62,14 +61,17 @@ namespace BoxApplication.Controllers
                 }
             }
 
-            foreach (BoxADUpdate potentialUpdate in potentialUpdates)
+            if(potentialUpdates.Count != 0)
             {
-                //if (_context.BoxADUpdates.Any(x => x != potentialUpdate))
-                //{
-                //add to context if it does not already exist
-                _context.BoxADUpdates.Add(potentialUpdate);
-                //}
-            }
+                foreach (BoxADUpdate potentialUpdate in potentialUpdates)
+                {
+                    //if (_context.BoxADUpdates.Any(x => x != potentialUpdate))
+                    //{
+                    //add to context if it does not already exist
+                    _context.BoxADUpdates.Add(potentialUpdate);
+                    //}
+                }
+            }            
 
             await _context.SaveChangesAsync();
 
@@ -100,106 +102,54 @@ namespace BoxApplication.Controllers
             return View();
         }
 
-        // POST: BoxADUpdates/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BoxADUpdateID,UserID,UpdateBoxOption,ADFieldChanged,BoxPreviousData,ADNewData")] BoxADUpdate boxADUpdate)
+
+        public async Task<IActionResult> UpdateAccounts()
         {
-            if (ModelState.IsValid)
+            Box.V2.BoxClient boxclient = BoxConnection();
+            BoxCollection<BoxUser> users = await boxclient.UsersManager.GetEnterpriseUsersAsync();
+            List<BoxUser> boxUsers = users.Entries;    
+            
+            foreach (BoxADUpdate boxUpdate in _context.BoxADUpdates.ToList())
             {
-                boxADUpdate.BoxADUpdateID = Guid.NewGuid();
-                _context.Add(boxADUpdate);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(boxADUpdate);
-        }
+                BoxUser userNeedsUpdates = boxUsers.Where(x => x.Id == boxUpdate.BoxID).FirstOrDefault();
 
-        // GET: BoxADUpdates/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var boxADUpdate = await _context.BoxADUpdates.FindAsync(id);
-            if (boxADUpdate == null)
-            {
-                return NotFound();
-            }
-            return View(boxADUpdate);
-        }
-
-        // POST: BoxADUpdates/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("BoxADUpdateID,UserID,UpdateBoxOption,ADFieldChanged,BoxPreviousData,ADNewData")] BoxADUpdate boxADUpdate)
-        {
-            if (id != boxADUpdate.BoxADUpdateID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (boxUpdate.ADFieldChanged == "AD Email")
                 {
-                    _context.Update(boxADUpdate);
-                    await _context.SaveChangesAsync();
+                    var updates = new BoxUserRequest()
+                    {
+                        Id = userNeedsUpdates.Id,
+                        Login = boxUpdate.ADNewData
+                    };
+                    BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
                 }
-                catch (DbUpdateConcurrencyException)
+                else if (boxUpdate.ADFieldChanged == "AD First Name")
                 {
-                    if (!BoxADUpdateExists(boxADUpdate.BoxADUpdateID))
+                    var updates = new BoxUserRequest()
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                        Id = userNeedsUpdates.Id,
+                        Name = boxUpdate.ADNewData
+                    };
+                    BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
                 }
-                return RedirectToAction(nameof(Index));
+                //log change
+                await LogAction(userNeedsUpdates.Id, "Updated " + boxUpdate.ADFieldChanged + " from " + boxUpdate.BoxPreviousData + " to " + boxUpdate.ADNewData);
+            
             }
-            return View(boxADUpdate);
+
+            await UpdateBoxTable(_context);
+
+            return View();
+
         }
 
-        // GET: BoxADUpdates/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task LogAction(string userid, string type)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var boxADUpdate = await _context.BoxADUpdates
-                .FirstOrDefaultAsync(m => m.BoxADUpdateID == id);
-            if (boxADUpdate == null)
-            {
-                return NotFound();
-            }
-
-            return View(boxADUpdate);
-        }
-
-        // POST: BoxADUpdates/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var boxADUpdate = await _context.BoxADUpdates.FindAsync(id);
-            _context.BoxADUpdates.Remove(boxADUpdate);
+            ApplicationAction act1 = new ApplicationAction();
+            act1.User = userid;
+            act1.Type = type;
+            act1.Date = DateTime.Now;
+            _context.Add(act1);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool BoxADUpdateExists(Guid id)
-        {
-            return _context.BoxADUpdates.Any(e => e.BoxADUpdateID == id);
         }
     }
 }

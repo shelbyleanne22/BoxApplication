@@ -14,8 +14,9 @@ namespace BoxApplication.Models
         [DisplayName("ID")]
         public string ID { get; set; }
 
-        [DisplayName("AD Guid")]
+        [ForeignKey("ADGUID")]
         public Byte[] ADGUID { get; set; }
+        public ActiveDirectoryUser aduser { get; set; }
 
         [DisplayName("Name")]
         public string Name { get; set; }
@@ -35,7 +36,5 @@ namespace BoxApplication.Models
         [DisplayName("Current Status")]
         public bool Active { get; set; }
 
-        [ForeignKey("ADGUID")]
-        public ActiveDirectoryUser aduser { get; set; }
     }
 }

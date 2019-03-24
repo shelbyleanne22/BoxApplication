@@ -13,10 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdateBoxOption)
+                @Html.DisplayNameFor(model => model.BoxID)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ADFieldChanged)
@@ -31,29 +28,27 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdateBoxOption)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ADFieldChanged)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BoxPreviousData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ADNewData)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BoxADUpdateID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BoxADUpdateID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BoxADUpdateID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BoxID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ADFieldChanged)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BoxPreviousData)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ADNewData)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+
+<div class="form-group">
+    <a asp-action="UpdateAccounts">Update Accounts</a>
+</div>

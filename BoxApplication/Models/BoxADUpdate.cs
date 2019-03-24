@@ -13,15 +13,10 @@ namespace BoxApplication.Models
         [Key]
         public Guid BoxADUpdateID { get; set; }
 
-        [ForeignKey("ActiveDirectoryUserID")]
-        public Byte[] UserID { get; set; }
+        [ForeignKey("ID")]
+        public string BoxID { get; set; }
+        public BoxUsers BoxUser { get; set; }
 
-        [DisplayName("Update Box Account?")]
-        public bool UpdateBoxOption { get; set; }
-
-        [DisplayName("Associated User")]
-        public ActiveDirectoryUser ADUser { get; set; }
-               
         [DisplayName("Field Changed")]
         public string ADFieldChanged { get; set; }
 
