@@ -57,6 +57,7 @@ namespace BoxApplication.Controllers
                 if (associatedaccts.Count == 1)
                 {
                     newUser.ADGUID = associatedaccts[0].ADGUID;
+                    newUser.aduser = associatedaccts[0];
                 }
                 else
                     continue;
@@ -72,8 +73,8 @@ namespace BoxApplication.Controllers
 
             string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu";
             //CN = sccs,CN = students, /DC=mcghi,DC=mcg,DC=edu/
-            string username = "ajarnagi";
-            string password = "Summer-Dogs-Backwards-11";
+            string username = "swilson6";
+            string password = "jxoAnd$hel22";
 
 
 

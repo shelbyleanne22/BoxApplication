@@ -9,7 +9,7 @@ using BoxApplication.Models;
 
 namespace BoxApplication.Controllers
 {
-    public class BoxADUpdatesController : Controller
+    public class BoxADUpdatesController : BaseController
     {
         private readonly BoxApplicationContext _context;
 
@@ -22,73 +22,60 @@ namespace BoxApplication.Controllers
         // GET: BoxADUpdates
         public async Task<IActionResult> Index()
         {
-            //creates list to hold all ad users from context
-            List<ActiveDirectoryUser> activeDirectoryUsers = new List<ActiveDirectoryUser>();
-            //adds all activedirectoryusers from context to empty list and sorts
-            activeDirectoryUsers = _context.ActiveDirectoryUsers.ToList();
-            activeDirectoryUsers.Sort();
-
+            await UpdateADTable(_context);
+            await UpdateBoxTable(_context);
             //creats list to hold all box users from context
-            List<BoxUsers> boxUsers = new List<BoxUsers>();
-            //adds all boxusers from context to empty list and sorts
-            boxUsers = _context.BoxUsers.ToList();
+            List<BoxUsers> boxUsers = _context.BoxUsers.ToList();
             boxUsers.Sort();
 
             //creates empty list to hold potential updates
             List<BoxADUpdate> potentialUpdates = new List<BoxADUpdate>();
 
-            foreach(var adUser in activeDirectoryUsers)
+            foreach (var boxUser in boxUsers)
             {
-                foreach(var boxUser in boxUsers)
+                if (boxUser.aduser.ADEmail != boxUser.Login)
                 {
-                    string needUpdates = adUser.NeedsUpdate(adUser, boxUser);
-                    if (needUpdates.Equals("ADEmail"))
-                    {
-                        BoxADUpdate potentialUpdate = new BoxADUpdate();
-                        potentialUpdate.ADUser = adUser;
-                        potentialUpdate.ADFieldChanged = "AD Email";
-                        potentialUpdate.ADNewData = adUser.ADEmail;
-                        potentialUpdate.BoxPreviousData = boxUser.Login;
-                        potentialUpdate.UpdateBoxOption = false;
-                        potentialUpdate.UserID = adUser.ADGUID;
-                        
-                        potentialUpdates.Add(potentialUpdate);
-                    }
-                    else if(needUpdates.Equals("ADFirstName"))
-                    {
-                        BoxADUpdate potentialUpdate = new BoxADUpdate();
-                        potentialUpdate.ADUser = adUser;
-                        potentialUpdate.ADFieldChanged = "AD First Name";
-                        potentialUpdate.ADNewData = adUser.ADFirstName;
-                        potentialUpdate.BoxPreviousData = boxUser.Name;
-                        potentialUpdate.UpdateBoxOption = false;
-                        potentialUpdate.UserID = adUser.ADGUID;
+                    BoxADUpdate potentialUpdate = new BoxADUpdate();
+                    potentialUpdate.ADUser = boxUser.aduser;
+                    potentialUpdate.ADFieldChanged = "AD Email";
+                    potentialUpdate.ADNewData = boxUser.aduser.ADEmail;
+                    potentialUpdate.BoxPreviousData = boxUser.Login;
+                    potentialUpdate.UpdateBoxOption = false;
+                    potentialUpdate.UserID = boxUser.aduser.ADGUID;
 
-                        potentialUpdates.Add(potentialUpdate);
-                    }
-                    else if(needUpdates.Equals("InvalidSort"))
-                    {
-                        //display error
-                    }
-                    //else needUpdates.Equals("NoChange");
-                    //{
-                        //nothing
-                    //}
+                    potentialUpdates.Add(potentialUpdate);
+                }
+                else if (boxUser.aduser.ADFirstName != boxUser.Name)
+                {
+                    BoxADUpdate potentialUpdate = new BoxADUpdate();
+                    potentialUpdate.ADUser = boxUser.aduser;
+                    potentialUpdate.ADFieldChanged = "AD First Name";
+                    potentialUpdate.ADNewData = boxUser.aduser.ADFirstName;
+                    potentialUpdate.BoxPreviousData = boxUser.Name;
+                    potentialUpdate.UpdateBoxOption = false;
+                    potentialUpdate.UserID = boxUser.ADGUID;
+                    potentialUpdates.Add(potentialUpdate);
+                }
+                else
+                {
+                    //display error
                 }
             }
 
-            foreach(BoxADUpdate potentialUpdate in potentialUpdates)
+            foreach (BoxADUpdate potentialUpdate in potentialUpdates)
             {
-                if (_context.BoxADUpdates.Any(x => x != potentialUpdate))
-                {
-                    //add to context if it does not already exist
-                    _context.BoxADUpdates.Add(potentialUpdate);
-                }
-            }     
+                //if (_context.BoxADUpdates.Any(x => x != potentialUpdate))
+                //{
+                //add to context if it does not already exist
+                _context.BoxADUpdates.Add(potentialUpdate);
+                //}
+            }
+
+            await _context.SaveChangesAsync();
 
             return View(await _context.BoxADUpdates.ToListAsync());
         }
-
+    
         // GET: BoxADUpdates/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
