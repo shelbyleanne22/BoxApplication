@@ -132,13 +132,14 @@ namespace BoxApplication.Controllers
                     BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
                 }
                 //log change
-                await LogAction(userNeedsUpdates.Id, "Updated " + boxUpdate.ADFieldChanged + " from " + boxUpdate.BoxPreviousData + " to " + boxUpdate.ADNewData);
-            
+                await LogAction(userNeedsUpdates.Id, "Updated Account");
+
+          
             }
 
             await UpdateBoxTable(_context);
 
-            return View();
+            return View("../Home/Index");
 
         }
 
