@@ -34,7 +34,7 @@ namespace BoxApplication.Controllers
 
             foreach (var boxUser in boxUsers)
             {
-                if (boxUser.aduser.ADEmail != boxUser.Login)
+                if (boxUser.aduser.ADEmail != boxUser.Login && boxUser.aduser.ADStatus == "Active")
                 {
                     BoxADUpdate potentialUpdate = new BoxADUpdate();
                     potentialUpdate.BoxUser = boxUser;
@@ -45,12 +45,12 @@ namespace BoxApplication.Controllers
 
                     potentialUpdates.Add(potentialUpdate);
                 }
-                else if (boxUser.aduser.ADFirstName != boxUser.Name)
+                else if (boxUser.aduser.ADFullName != boxUser.Name && boxUser.aduser.ADStatus == "Active")
                 {
                     BoxADUpdate potentialUpdate = new BoxADUpdate();
                     potentialUpdate.BoxUser = boxUser;
                     potentialUpdate.ADFieldChanged = "AD First Name";
-                    potentialUpdate.ADNewData = boxUser.aduser.ADFirstName;
+                    potentialUpdate.ADNewData = boxUser.aduser.ADFullName;
                     potentialUpdate.BoxPreviousData = boxUser.Name;
                     potentialUpdate.BoxID = boxUser.ID;
                     potentialUpdates.Add(potentialUpdate);
@@ -122,7 +122,7 @@ namespace BoxApplication.Controllers
                     };
                     BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
                 }
-                else if (boxUpdate.ADFieldChanged == "AD First Name")
+                else if (boxUpdate.ADFieldChanged == "AD Full Name")
                 {
                     var updates = new BoxUserRequest()
                     {

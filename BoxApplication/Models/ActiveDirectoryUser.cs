@@ -13,15 +13,16 @@ namespace BoxApplication.Models
         [DisplayName("AD Guid")]
         public Byte[] ADGUID { get; set; }
 
+        //matches BoxUser Login
         [DisplayName("AD Email")]
         [DataType(DataType.EmailAddress)]
         public string ADEmail { get; set; }
 
-        [DisplayName("AD Username")]
-        public string ADUsername { get; set; }
+        //[DisplayName("AD Username")]
+        //public string ADUsername { get; set; }
 
-        [DisplayName("AD First Name")]
-        public string ADFirstName { get; set; }
+        [DisplayName("AD Full Name")]
+        public string ADFullName { get; set; }
 
         [DisplayName("Status")]
         public string ADStatus { get; set; }

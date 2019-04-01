@@ -20,11 +20,11 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>
+                    @*<th>
                         @Html.DisplayNameFor(model => model.ADUsername)
-                    </th>
+                    </th>*@
                     <th>
-                        @Html.DisplayNameFor(model => model.ADFirstName)
+                        @Html.DisplayNameFor(model => model.ADFullName)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.ADStatus)
@@ -38,11 +38,11 @@
             <tbody>
         @foreach (var item in Model) {
                 <tr>
-                    <td>
+                    @*<td>
                         @Html.DisplayFor(modelItem => item.ADUsername)
-                    </td>
+                    </td>*@
                     <td>
-                        @Html.DisplayFor(modelItem => item.ADFirstName)
+                        @Html.DisplayFor(modelItem => item.ADFullName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ADStatus)
