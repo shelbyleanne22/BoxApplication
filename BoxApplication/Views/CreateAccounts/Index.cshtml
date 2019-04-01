@@ -37,13 +37,7 @@
                 @Html.DisplayFor(modelItem => item.ADUsername)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ADFirstName)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.ADStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ADDateModified)
             </td>
         </tr>
 }
@@ -51,5 +45,5 @@
 </table>
 
 <div class="form-group">
-    <a asp-action="RemoveInactiveAccounts">Remove Inactive Users</a>
+    <a asp-action="CreateAccounts">Create Box Accounts</a>
 </div>
