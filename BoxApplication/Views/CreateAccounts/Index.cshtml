@@ -1,0 +1,49 @@
+﻿@model IEnumerable<BoxApplication.Models.ActiveDirectoryUser>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Active Directory users without a box account</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ADEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ADUsername)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ADFirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ADStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ADDateModified)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ADEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ADUsername)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ADStatus)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div class="form-group">
+    <a asp-action="CreateAccounts">Create Box Accounts</a>
+</div>
