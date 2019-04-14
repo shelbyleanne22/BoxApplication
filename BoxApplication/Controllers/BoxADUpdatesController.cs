@@ -132,7 +132,7 @@ namespace BoxApplication.Controllers
                     BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
                 }
                 //log change
-                await LogAction(userNeedsUpdates.Id, "Updated Account");
+                await LogAction(userNeedsUpdates.Id, "Updated Box Account");
 
           
             }

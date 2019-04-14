@@ -73,9 +73,11 @@ namespace BoxApplication.Controllers
             List<ActiveDirectoryUser> usersWithoutBox = GetUsersWithoutBox();
             foreach(ActiveDirectoryUser adUser in usersWithoutBox)
             {
-                string id = System.Text.Encoding.UTF8.GetString(adUser.ADGUID);
+                //string id = System.Text.Encoding.UTF8.GetString(adUser.ADGUID);
+                string id = adUser.ADEmail;
                 BoxUser newUser = await _boxclient.UsersManager.GetUserInformationAsync(userId: id);
-                await LogAction(id, "Created Box account for " + adUser.ADUsername);
+                //await LogAction(id, "Created Box account for " + adUser.ADUsername);
+                await LogAction(id, "Created Box Account");
             }
 
             return View("Index");

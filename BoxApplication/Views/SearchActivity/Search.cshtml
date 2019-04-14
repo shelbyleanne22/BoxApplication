@@ -1,89 +1,44 @@
-﻿@model IEnumerable<BoxApplication.Models.ApplicationAction>
+﻿@model BoxApplication.Models.ApplicationAction
 
 @{
     ViewData["Title"] = "Search";
 }
 
-
-<h1>Search</h1>
-
-<h4>ApplicationAction</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Search">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FirstOrDefault().Type" class="control-label"></label>
-                <input name="type" class="form-control" />
-                <span asp-validation-for="FirstOrDefault().Type" class="text-danger"></span>
+                <label asp-for="Type" class="control-label"></label>
+                <br />
+                <select asp-for="Type">
+                    <option value="">---</option>
+                    <option value="Removed Box Account">Removed Box Account</option>
+                    <option value="Created Box Account">Created Box Account</option>
+                    <option value="Updated Box Account">Updated Box Account</option>
+                </select>
+                <span asp-validation-for="Type" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FirstOrDefault().User" class="control-label"></label>
+                <label asp-for="User" class="control-label"></label>
                 <input name="user" class="form-control" />
-                <span asp-validation-for="FirstOrDefault().User" class="text-danger"></span>
+                <span asp-validation-for="User" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label class="control-label">Start date and time</label>
-                <input name="startDateTime" type="datetime-local" class="form-control" />
-                <span asp-validation-for="FirstOrDefault().Date" class="text-danger"></span>
+                <input name="startDateTime" type="date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label class="control-label">End date and time</label>
-                <input name="endDateTime" type="datetime-local" class="form-control" />
-                <span asp-validation-for="FirstOrDefault().Date" class="text-danger"></span>
+                <input name="endDateTime" type="date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Search" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-@Model.Count() results
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Type)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Date)
-                </td>
-            </tr>
-            
-        }
-    </tbody>
-</table>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

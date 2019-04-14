@@ -27,7 +27,7 @@ namespace BoxApplication.Controllers
         // GET: ApplicationActions/Search
         public IActionResult Search()
         {
-            return View(new List<ApplicationAction>());
+            return View();
         }
 
         // POST: ApplicationActions/Search
@@ -45,7 +45,7 @@ namespace BoxApplication.Controllers
                                       && (endDateTime   == nullDateTime || endDateTime   >= action.Date)
                                 select action;
 
-            return View(searchResults.ToList());
+            return View("Index", searchResults.ToList());
         }
 
     }

@@ -64,7 +64,7 @@ namespace BoxApplication.Controllers
 
                 //Delete user from Enterprise and log
                 await _boxclient.UsersManager.DeleteEnterpriseUserAsync(user.ID, false, true);
-                await LogAction(user.Login, "Removed Account");
+                await LogAction(user.Login, "Removed Box Account");
 
                 user.Active = false;
                 _context.BoxUsers.Update(user);
