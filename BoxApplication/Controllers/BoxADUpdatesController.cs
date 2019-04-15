@@ -25,73 +25,57 @@ namespace BoxApplication.Controllers
         {
             //await UpdateADTable(_context);
             await UpdateBoxTable(_context);
-            //creates list to hold all active box users from context
-            List<BoxUsers> boxUsers = await _context.BoxUsers.Where(
-                x => (x.aduser.ADStatus == "Active") && (x.Active == true)).ToListAsync();
+            //creats list to hold all box users from context
+            List<BoxUsers> boxUsers = _context.BoxUsers.ToList();
             boxUsers.Sort();
 
             //creates empty list to hold potential updates
             List<BoxADUpdate> potentialUpdates = new List<BoxADUpdate>();
-     
-            if(boxUsers.Count != 0)
+
+            foreach (var boxUser in boxUsers)
             {
-                foreach (var boxUser in boxUsers)
+                if (boxUser.aduser.ADEmail != boxUser.Login && boxUser.aduser.ADStatus == "Active")
                 {
-                    if (boxUser.aduser.ADEmail != boxUser.Login)
-                    { 
-                        potentialUpdates.Add(new BoxADUpdate
-                        {
-                            BoxUser = boxUser,
-                            ADFieldChanged = "AD Email",
-                            ADNewData = boxUser.aduser.ADEmail,
-                            BoxPreviousData = boxUser.Login,
-                            BoxID = boxUser.ID,
-                            Status = "Active"
-                        });                
+                    BoxADUpdate potentialUpdate = new BoxADUpdate();
+                    potentialUpdate.BoxUser = boxUser;
+                    potentialUpdate.ADFieldChanged = "AD Email";
+                    potentialUpdate.ADNewData = boxUser.aduser.ADEmail;
+                    potentialUpdate.BoxPreviousData = boxUser.Login;
+                    potentialUpdate.BoxID = boxUser.ID;
 
-                    }
-                    else if (boxUser.aduser.ADFullName != boxUser.Name)
-                    {
-                        potentialUpdates.Add(new BoxADUpdate
-                        {
-                            BoxUser = boxUser,
-                            ADFieldChanged = "AD First Name",
-                            ADNewData = boxUser.aduser.ADFullName,
-                            BoxPreviousData = boxUser.Name,
-                            BoxID = boxUser.ID,
-                            Status = "Active"
-                        });
-                    }
-                   
+                    potentialUpdates.Add(potentialUpdate);
                 }
-
-                if (potentialUpdates.Count != 0)
+                else if (boxUser.aduser.ADFullName != boxUser.Name && boxUser.aduser.ADStatus == "Active")
                 {
-                    foreach (BoxADUpdate potentialUpdate in potentialUpdates)
-                    {
-
-                        var result = _context.BoxADUpdates.SingleOrDefault(x => x.BoxID == potentialUpdate.BoxID && x.Status == "Active");
-                        if (result != null) 
-                        {
-                            //update record to match potential update or add additional update
-                            result.ADFieldChanged = potentialUpdate.ADFieldChanged;
-                            result.ADNewData = potentialUpdate.ADNewData;
-                            result.BoxPreviousData = potentialUpdate.BoxPreviousData;
-                            result.Status = "Active";
-                        }
-                        else
-                        {
-                            //add to context if it does not already exist
-                            _context.BoxADUpdates.Add(potentialUpdate);
-                        }
-                      
-                    }
+                    BoxADUpdate potentialUpdate = new BoxADUpdate();
+                    potentialUpdate.BoxUser = boxUser;
+                    potentialUpdate.ADFieldChanged = "AD First Name";
+                    potentialUpdate.ADNewData = boxUser.aduser.ADFullName;
+                    potentialUpdate.BoxPreviousData = boxUser.Name;
+                    potentialUpdate.BoxID = boxUser.ID;
+                    potentialUpdates.Add(potentialUpdate);
+                }
+                else
+                {
+                    //display error
                 }
             }
-            
+
+            if(potentialUpdates.Count != 0)
+            {
+                foreach (BoxADUpdate potentialUpdate in potentialUpdates)
+                {
+                    //if (_context.BoxADUpdates.Any(x => x != potentialUpdate))
+                    //{
+                    //add to context if it does not already exist
+                    _context.BoxADUpdates.Add(potentialUpdate);
+                    //}
+                }
+            }            
+
             await _context.SaveChangesAsync();
-            
-            return View(await _context.BoxADUpdates.Where(x => x.Status == "Active").ToListAsync());
+
+            return View(await _context.BoxADUpdates.ToListAsync());
         }
     
         // GET: BoxADUpdates/Details/5
@@ -123,9 +107,9 @@ namespace BoxApplication.Controllers
         {
             Box.V2.BoxClient boxclient = BoxConnection();
             BoxCollection<BoxUser> users = await boxclient.UsersManager.GetEnterpriseUsersAsync();
-            List<BoxUser> boxUsers = users.Entries;                
-
-            foreach (BoxADUpdate boxUpdate in _context.BoxADUpdates.ToList().Where(x => x.Status == "Active"))
+            List<BoxUser> boxUsers = users.Entries;    
+            
+            foreach (BoxADUpdate boxUpdate in _context.BoxADUpdates.ToList())
             {
                 BoxUser userNeedsUpdates = boxUsers.Where(x => x.Id == boxUpdate.BoxID).FirstOrDefault();
 
@@ -137,12 +121,6 @@ namespace BoxApplication.Controllers
                         Login = boxUpdate.ADNewData
                     };
                     BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
-
-                    //updates box users context
-                    BoxUsers result = new BoxUsers();
-                    result = _context.BoxUsers.SingleOrDefault(x => x.ID == updatedUser.Id);
-                    result.Login = updatedUser.Login;
-
                 }
                 else if (boxUpdate.ADFieldChanged == "AD Full Name")
                 {
@@ -152,36 +130,27 @@ namespace BoxApplication.Controllers
                         Name = boxUpdate.ADNewData
                     };
                     BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
-
-                    //updates box users context
-                    BoxUsers result = new BoxUsers();
-                    result = _context.BoxUsers.SingleOrDefault(x => x.ID == updatedUser.Id);
-                    result.Name = updatedUser.Name;
                 }
-
-                //set status to inactive
-                boxUpdate.Status = "Inactive";
-
                 //log change
-                await LogAction(userNeedsUpdates.Id, "Updated Account");                          
+                await LogAction(userNeedsUpdates.Login, "Updated Box Account");
+
+          
             }
 
-            
-            await _context.SaveChangesAsync();
-            return View("~/Views/Home/Index.cshtml");
+            await UpdateBoxTable(_context);
+
+            return View("../Home/Index");
+
         }
 
         public async Task LogAction(string userid, string type)
         {
-            ApplicationAction act1 = new ApplicationAction
-            {
-                User = userid,
-                Type = type,
-                Date = DateTime.Now
-            };
+            ApplicationAction act1 = new ApplicationAction();
+            act1.User = userid;
+            act1.Type = type;
+            act1.Date = DateTime.Now;
             _context.Add(act1);
             await _context.SaveChangesAsync();
         }
-
     }
 }
