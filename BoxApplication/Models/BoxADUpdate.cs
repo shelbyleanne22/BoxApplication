@@ -25,5 +25,8 @@ namespace BoxApplication.Models
 
         [DisplayName("New Data")]
         public string ADNewData { get; set; }
+
+        [DisplayName("Status")]
+        public string Status { get; set; }
     }
 }

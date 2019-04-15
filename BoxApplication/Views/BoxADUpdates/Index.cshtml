@@ -24,31 +24,37 @@
             <th>
                 @Html.DisplayNameFor(model => model.ADNewData)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BoxID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ADFieldChanged)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BoxPreviousData)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ADNewData)
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BoxID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ADFieldChanged)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BoxPreviousData)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ADNewData)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+        </tr>
         }
     </tbody>
 </table>
 
 
 <div class="form-group">
-    <a asp-action="UpdateAccounts">Confirm Updates</a>
+    <a asp-action="UpdateAccounts" data-target="#resultsModal" >Confirm Updates</a>
 </div>

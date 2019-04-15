@@ -43,14 +43,16 @@ namespace BoxApplication.Controllers
             BoxCollection<BoxUser> users = await boxclient.UsersManager.GetEnterpriseUsersAsync();
             foreach (BoxUser user in users.Entries)
             {
-                BoxUsers newUser = new BoxUsers();
-                newUser.ID = user.Id;
-                newUser.Login = user.Login;
-                newUser.Name = user.Name;
-                newUser.DateModified = user.ModifiedAt.Value;
-                newUser.DateCreated = user.CreatedAt.Value;
-                newUser.SpaceUsed = user.SpaceUsed.Value;
-                newUser.Active = true;
+                BoxUsers newUser = new BoxUsers
+                {
+                    ID = user.Id,
+                    Login = user.Login,
+                    Name = user.Name,
+                    DateModified = user.ModifiedAt.Value,
+                    DateCreated = user.CreatedAt.Value,
+                    SpaceUsed = user.SpaceUsed.Value,
+                    Active = true
+                };
 
                 //Get ADGUID of new box users
                 List<ActiveDirectoryUser> associatedaccts = _context.ActiveDirectoryUsers.Where(x => x.ADEmail == user.Login).ToList();
@@ -64,6 +66,18 @@ namespace BoxApplication.Controllers
 
                 if (!_context.BoxUsers.Any(x => x.ID == newUser.ID))
                     _context.BoxUsers.Add(newUser);
+                else
+                {
+                    var result = _context.BoxUsers.SingleOrDefault(x => x.ID == newUser.ID);
+                    if(result != null)
+                    {
+                        result.DateCreated = newUser.DateCreated;
+                        result.DateModified = newUser.DateModified;
+                        result.Login = newUser.Login;
+                        result.Name = newUser.Name;
+                        result.SpaceUsed = newUser.SpaceUsed;
+                    }
+                }
                 _context.SaveChanges();
             }
         }
@@ -71,95 +85,95 @@ namespace BoxApplication.Controllers
        
         public async Task UpdateADTable(BoxApplicationContext _context)
         {
-            List<ActiveDirectoryUser> inactiveADusers = new List<ActiveDirectoryUser>();
+            //List<ActiveDirectoryUser> inactiveADusers = new List<ActiveDirectoryUser>();
 
-            string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu";
-            //CN = sccs,CN = students, /DC=mcghi,DC=mcg,DC=edu/
-            string username = "";
-            string password = "";
+            //string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu";
+            ////CN = sccs,CN = students, /DC=mcghi,DC=mcg,DC=edu/
+            //string username = "";
+            //string password = "";
 
 
 
-            //creates directoryentry object that binds the instance to the domain path
-            DirectoryEntry searchRoot = new DirectoryEntry(DomainPath, username, password, AuthenticationTypes.Secure);
-            //creates a directorysearcher object which searches for all users in the domain
-            DirectorySearcher searchactive = new DirectorySearcher(searchRoot);
-            DirectorySearcher searchinactive = new DirectorySearcher(searchRoot);
+            ////creates directoryentry object that binds the instance to the domain path
+            //DirectoryEntry searchRoot = new DirectoryEntry(DomainPath, username, password, AuthenticationTypes.Secure);
+            ////creates a directorysearcher object which searches for all users in the domain
+            //DirectorySearcher searchactive = new DirectorySearcher(searchRoot);
+            //DirectorySearcher searchinactive = new DirectorySearcher(searchRoot);
 
-            //filters the search to only active/enabled accounts
-            searchactive.Filter = "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2))";
-            searchactive.PropertiesToLoad.Add("objectguid");
-            //searchactive.PropertiesToLoad.Add("samaccountname");
-            searchactive.PropertiesToLoad.Add("mail");
-            searchactive.PropertiesToLoad.Add("displayName");
-            searchactive.PropertiesToLoad.Add("whenchanged");
+            ////filters the search to only active/enabled accounts
+            //searchactive.Filter = "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2))";
+            //searchactive.PropertiesToLoad.Add("objectguid");
+            ////searchactive.PropertiesToLoad.Add("samaccountname");
+            //searchactive.PropertiesToLoad.Add("mail");
+            //searchactive.PropertiesToLoad.Add("displayName");
+            //searchactive.PropertiesToLoad.Add("whenchanged");
 
-            //filters the search to only inactive/disabled accounts
-            searchinactive.Filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))";
-            searchinactive.PropertiesToLoad.Add("objectguid");
-            //searchinactive.PropertiesToLoad.Add("samaccountname");
-            searchinactive.PropertiesToLoad.Add("mail");
-            searchinactive.PropertiesToLoad.Add("displayName");
-            searchinactive.PropertiesToLoad.Add("whenchanged");
+            ////filters the search to only inactive/disabled accounts
+            //searchinactive.Filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))";
+            //searchinactive.PropertiesToLoad.Add("objectguid");
+            ////searchinactive.PropertiesToLoad.Add("samaccountname");
+            //searchinactive.PropertiesToLoad.Add("mail");
+            //searchinactive.PropertiesToLoad.Add("displayName");
+            //searchinactive.PropertiesToLoad.Add("whenchanged");
 
-            SearchResult result;
-            SearchResultCollection resultCol = searchactive.FindAll();
+            //SearchResult result;
+            //SearchResultCollection resultCol = searchactive.FindAll();
 
-            for (int counter = 0; counter < resultCol.Count; counter++)
-            {
-                string UserNameEmailString = string.Empty;
-                result = resultCol[counter];
-                if (/*result.Properties.Contains("samaccountname") &&*/
-                            result.Properties.Contains("mail") &&
-                    result.Properties.Contains("displayname"))
-                {
-                    ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
-                    activeDirectoryUser.ADGUID = (Byte[])result.Properties["objectguid"][0];
-                    activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
-                    activeDirectoryUser.ADFullName = (String)result.Properties["displayName"][0];
-                    //        activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
-                    activeDirectoryUser.ADDateModified = (DateTime)result.Properties["whenchanged"][0];
-                    activeDirectoryUser.ADStatus = "Active";
+            //for (int counter = 0; counter < resultCol.Count; counter++)
+            //{
+            //    string UserNameEmailString = string.Empty;
+            //    result = resultCol[counter];
+            //    if (/*result.Properties.Contains("samaccountname") &&*/
+            //                result.Properties.Contains("mail") &&
+            //        result.Properties.Contains("displayname"))
+            //    {
+            //        ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
+            //        activeDirectoryUser.ADGUID = (Byte[])result.Properties["objectguid"][0];
+            //        activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
+            //        activeDirectoryUser.ADFullName = (String)result.Properties["displayName"][0];
+            //        //        activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
+            //        activeDirectoryUser.ADDateModified = (DateTime)result.Properties["whenchanged"][0];
+            //        activeDirectoryUser.ADStatus = "Active";
 
-                    if (_context.ActiveDirectoryUsers.Any(o => o.ADGUID == activeDirectoryUser.ADGUID))
-                    {
-                        if (!_context.ActiveDirectoryUsers.Contains(activeDirectoryUser))
-                            _context.ActiveDirectoryUsers.Update(activeDirectoryUser);
-                    }
-                    else
-                        _context.ActiveDirectoryUsers.Add(activeDirectoryUser);
-                    await _context.SaveChangesAsync();
-                }
-            }
+            //        if (_context.ActiveDirectoryUsers.Any(o => o.ADGUID == activeDirectoryUser.ADGUID))
+            //        {
+            //            if (!_context.ActiveDirectoryUsers.Contains(activeDirectoryUser))
+            //                _context.ActiveDirectoryUsers.Update(activeDirectoryUser);
+            //        }
+            //        else
+            //            _context.ActiveDirectoryUsers.Add(activeDirectoryUser);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
 
-            resultCol = searchinactive.FindAll();
+            //resultCol = searchinactive.FindAll();
 
-            for (int counter = 0; counter < resultCol.Count; counter++)
-            {
-                string UserNameEmailString = string.Empty;
-                result = resultCol[counter];
-                if (/*result.Properties.Contains("samaccountname") &&*/
-                            result.Properties.Contains("mail") &&
-                    result.Properties.Contains("displayName"))
-                {
-                    ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
-                    activeDirectoryUser.ADGUID = (Byte[])result.Properties["objectguid"][0];
-                    activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
-                    activeDirectoryUser.ADFullName = (String)result.Properties["displayName"][0];
-                    //activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
-                    activeDirectoryUser.ADDateModified = (DateTime)result.Properties["whenchanged"][0];
-                    activeDirectoryUser.ADStatus = "Inactive";
+            //for (int counter = 0; counter < resultCol.Count; counter++)
+            //{
+            //    string UserNameEmailString = string.Empty;
+            //    result = resultCol[counter];
+            //    if (/*result.Properties.Contains("samaccountname") &&*/
+            //                result.Properties.Contains("mail") &&
+            //        result.Properties.Contains("displayName"))
+            //    {
+            //        ActiveDirectoryUser activeDirectoryUser = new ActiveDirectoryUser();
+            //        activeDirectoryUser.ADGUID = (Byte[])result.Properties["objectguid"][0];
+            //        activeDirectoryUser.ADEmail = (String)result.Properties["mail"][0];
+            //        activeDirectoryUser.ADFullName = (String)result.Properties["displayName"][0];
+            //        //activeDirectoryUser.ADUsername = (String)result.Properties["samaccountname"][0];
+            //        activeDirectoryUser.ADDateModified = (DateTime)result.Properties["whenchanged"][0];
+            //        activeDirectoryUser.ADStatus = "Inactive";
 
-                    if (_context.ActiveDirectoryUsers.Any(o => o.ADGUID == activeDirectoryUser.ADGUID))
-                    {
-                        if (!_context.ActiveDirectoryUsers.Contains(activeDirectoryUser))
-                            _context.ActiveDirectoryUsers.Update(activeDirectoryUser);
-                    }
-                    else
-                        _context.ActiveDirectoryUsers.Add(activeDirectoryUser);
-                    await _context.SaveChangesAsync();
-                }
-            }
+            //        if (_context.ActiveDirectoryUsers.Any(o => o.ADGUID == activeDirectoryUser.ADGUID))
+            //        {
+            //            if (!_context.ActiveDirectoryUsers.Contains(activeDirectoryUser))
+            //                _context.ActiveDirectoryUsers.Update(activeDirectoryUser);
+            //        }
+            //        else
+            //            _context.ActiveDirectoryUsers.Add(activeDirectoryUser);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
         }
     }
 }
