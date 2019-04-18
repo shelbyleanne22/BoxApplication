@@ -73,32 +73,18 @@ namespace BoxApplication.Controllers
             List<ActiveDirectoryUser> usersWithoutBox = GetUsersWithoutBox();
             foreach(ActiveDirectoryUser adUser in usersWithoutBox)
             {
-                //string id = System.Text.Encoding.UTF8.GetString(adUser.ADGUID);
+                var userParams = new BoxUserRequest()
+                {
+                    Name = adUser.ADFullName,
+                    Login = adUser.ADEmail
+                };
                 string id = adUser.ADEmail;
-                BoxUser newUser = await _boxclient.UsersManager.GetUserInformationAsync(userId: id);
-                //await LogAction(id, "Created Box account for " + adUser.ADUsername);
+                BoxUser newUser = await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
                 await LogAction(id, "Created Box Account");
+                _context.ActiveDirectoryUsers.Update(adUser);
             }
 
             return View("Index");
-
-            //BoxUser currentUser = await _boxclient.UsersManager.GetCurrentUserInformationAsync();
-            //List<BoxUsers> inactiveboxusers = await GetInactiveUsers();
-            //foreach (BoxUsers user in inactiveboxusers)
-            //{
-            //    //Move root folder to service account and log
-            //    BoxFolder movedFolder = await _boxclient.UsersManager.MoveUserFolderAsync(user.ID, currentUser.Id);
-            //    await LogAction(user.Login, "Transfer to Service Acount");
-            //
-            //    //Delete user from Enterprise and log
-            //    await _boxclient.UsersManager.DeleteEnterpriseUserAsync(user.ID, false, true);
-            //    await LogAction(user.Login, "Removed Account");
-            //
-            //    user.Active = false;
-            //    _context.BoxUsers.Update(user);
-            //}
-            //await _context.SaveChangesAsync();
-            //return View("Index", await GetInactiveUsers());
         }
     }
 }

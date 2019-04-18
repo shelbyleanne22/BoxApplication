@@ -89,8 +89,8 @@ namespace BoxApplication.Controllers
 
             string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu";
             //CN = sccs,CN = students, /DC=mcghi,DC=mcg,DC=edu/
-            string username = "";
-            string password = "";
+            string username = "kmetheny";
+            string password = "T.Aquinas1225!";
 
 
 
