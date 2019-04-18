@@ -81,7 +81,6 @@ namespace BoxApplication.Controllers
                 string id = adUser.ADEmail;
                 BoxUser newUser = await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
                 await LogAction(id, "Created Box Account");
-                _context.ActiveDirectoryUsers.Update(adUser);
             }
 
             return View("Index");
