@@ -68,8 +68,6 @@ namespace BoxApplication.Migrations
 
                     b.Property<string>("BoxUserID");
 
-                    b.Property<string>("Status");
-
                     b.HasKey("BoxADUpdateID");
 
                     b.HasIndex("BoxUserID");

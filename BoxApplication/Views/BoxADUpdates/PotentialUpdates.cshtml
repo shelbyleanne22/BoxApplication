@@ -4,8 +4,11 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Updates</h1>
+<h1>Potential Updates</h1>
 
+@*<p>
+    <a asp-action="Create">Create New</a>
+</p>*@
 <table class="table">
     <thead>
         <tr>
@@ -28,7 +31,8 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.BoxUser.Login)
@@ -46,6 +50,11 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>
+
+
+<div class="form-group">
+    <a asp-action="UpdateAccounts" class="btn btn-success">Confirm Updates</a>
+</div>

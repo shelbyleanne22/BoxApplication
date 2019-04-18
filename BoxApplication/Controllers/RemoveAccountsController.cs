@@ -36,10 +36,12 @@ namespace BoxApplication.Controllers
 
         public async Task LogAction(string userid, string type)
         {
-            ApplicationAction act1 = new ApplicationAction();
-            act1.User = userid;
-            act1.Type = type;
-            act1.Date = DateTime.Now;
+            ApplicationAction act1 = new ApplicationAction
+            {
+                User = userid,
+                Type = type,
+                Date = DateTime.Now
+            };
             _context.Add(act1);
             await _context.SaveChangesAsync();
         }
@@ -70,7 +72,7 @@ namespace BoxApplication.Controllers
                 _context.BoxUsers.Update(user);
             }
             await _context.SaveChangesAsync();
-            return View("Index", await GetInactiveUsers());
+            return View("../Home/Index");
         }
     }
 }

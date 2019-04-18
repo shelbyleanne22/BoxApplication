@@ -22,7 +22,7 @@ namespace BoxApplication.Controllers
         public async Task<IActionResult> Index()
         {
             var boxApplicationContext = _context.BoxUsers.Include(b => b.aduser);
-            return View(await boxApplicationContext.ToListAsync());
+            return View(await boxApplicationContext.OrderBy(x => x.DateCreated).ToListAsync());
         }
     }
 }

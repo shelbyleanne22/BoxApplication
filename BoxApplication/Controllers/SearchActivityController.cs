@@ -45,7 +45,7 @@ namespace BoxApplication.Controllers
                                       && (endDateTime   == nullDateTime || endDateTime   >= action.Date)
                                 select action;
 
-            return View("Index", searchResults.ToList());
+            return View("Index", searchResults.OrderBy(x => x.Date).ToList());
         }
 
     }
