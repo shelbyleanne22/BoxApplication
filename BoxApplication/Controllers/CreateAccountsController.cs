@@ -40,6 +40,7 @@ namespace BoxApplication.Controllers
                         if (adUser.ADGUID == boxUser.ADGUID)
                         {
                             hasBoxAccount = true;
+                            break;
                         }
                     }
                     if (!hasBoxAccount)
@@ -73,13 +74,22 @@ namespace BoxApplication.Controllers
             List<ActiveDirectoryUser> usersWithoutBox = GetUsersWithoutBox();
             foreach(ActiveDirectoryUser adUser in usersWithoutBox)
             {
+                // Change name from "Last, First M." to "First M Last"
+                int commaIndex = adUser.ADFullName.IndexOf(',');
+                string boxName = adUser.ADFullName;
+                if (commaIndex >= 0)
+                {
+                    boxName += adUser.ADFullName.Substring(commaIndex + 2, adUser.ADFullName.Length - commaIndex - 2).TrimEnd('.')
+                            + ' ' + adUser.ADFullName.Substring(0, commaIndex);
+                }
+
                 var userParams = new BoxUserRequest()
                 {
-                    Name = adUser.ADFullName,
+                    Name = boxName,
                     Login = adUser.ADEmail
                 };
                 string id = adUser.ADEmail;
-                BoxUser newUser = await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
+                await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
                 await LogAction(id, "Created Box Account");
             }
 
