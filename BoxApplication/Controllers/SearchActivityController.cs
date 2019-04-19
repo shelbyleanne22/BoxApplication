@@ -40,7 +40,7 @@ namespace BoxApplication.Controllers
             DateTime nullDateTime = new DateTime();
             var searchResults = from action in _context.ApplicationActions
                                 where    (type == null || action.Type.ToLower().Contains(type.ToLower()))
-                                      && (user == null || action.Type.ToLower().Contains(user.ToLower()))
+                                      && (user == null || action.User.ToLower().Contains(user.ToLower()))
                                       && (startDateTime == nullDateTime || startDateTime <= action.Date)
                                       && (endDateTime   == nullDateTime || endDateTime   >= action.Date)
                                 select action;
