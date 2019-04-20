@@ -153,7 +153,7 @@ namespace BoxApplication.Controllers
                 }
             }
 
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
     }
 }
