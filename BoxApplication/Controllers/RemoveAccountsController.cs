@@ -49,7 +49,7 @@ namespace BoxApplication.Controllers
         // GET: BoxUsers
         public async Task<IActionResult> Index()
         {
-            await UpdateADTable(_context);
+            //await UpdateADTable(_context);
             await UpdateBoxTable(_context);
             return View(await GetInactiveUsers());
         }
@@ -62,7 +62,7 @@ namespace BoxApplication.Controllers
             {
                 //Move root folder to service account and log
                 BoxFolder movedFolder = await _boxclient.UsersManager.MoveUserFolderAsync(user.ID, currentUser.Id);
-                await LogAction(user.Login, "Transfer to Service Acount");
+                await LogAction(user.Login, "Transfer to Service Account");
 
                 //Delete user from Enterprise and log
                 await _boxclient.UsersManager.DeleteEnterpriseUserAsync(user.ID, false, true);

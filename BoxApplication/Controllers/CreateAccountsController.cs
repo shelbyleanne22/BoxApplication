@@ -64,7 +64,7 @@ namespace BoxApplication.Controllers
 
         public async Task<IActionResult> Index()
         {
-            await UpdateADTable(_context);
+            //await UpdateADTable(_context);
             await UpdateBoxTable(_context);
             return View(GetUsersWithoutBox());
         }
@@ -74,26 +74,16 @@ namespace BoxApplication.Controllers
             List<ActiveDirectoryUser> usersWithoutBox = GetUsersWithoutBox();
             foreach(ActiveDirectoryUser adUser in usersWithoutBox)
             {
-                // Change name from "Last, First M." to "First M Last"
-                int commaIndex = adUser.ADFullName.IndexOf(',');
-                string boxName = adUser.ADFullName;
-                if (commaIndex >= 0)
-                {
-                    boxName += adUser.ADFullName.Substring(commaIndex + 2, adUser.ADFullName.Length - commaIndex - 2).TrimEnd('.')
-                            + ' ' + adUser.ADFullName.Substring(0, commaIndex);
-                }
-
                 var userParams = new BoxUserRequest()
                 {
-                    Name = boxName,
+                    Name = adUser.ADFullName,
                     Login = adUser.ADEmail
                 };
-                string id = adUser.ADEmail;
                 await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
-                await LogAction(id, "Created Box Account");
+                await LogAction(adUser.ADEmail, "Created Box Account");
             }
 
-            return View("Index");
+            return View("../Home/Index");
         }
     }
 }

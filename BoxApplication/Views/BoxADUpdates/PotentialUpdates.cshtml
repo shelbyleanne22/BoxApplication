@@ -5,56 +5,59 @@
 }
 
 <h1>Potential Updates</h1>
-
-@*<p>
-    <a asp-action="Create">Create New</a>
-</p>*@
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.BoxUser.Login)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ADFieldChanged)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BoxPreviousData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ADNewData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BoxUser.Login)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ADFieldChanged)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BoxPreviousData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ADNewData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
+@if (Model.Count() != 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.BoxUser.Login)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ADFieldChanged)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BoxPreviousData)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ADNewData)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BoxUser.Login)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ADFieldChanged)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BoxPreviousData)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ADNewData)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
 
 
-<div class="form-group">
-    <a asp-action="UpdateAccounts" class="btn btn-success">Confirm Updates</a>
-</div>
+    <div class="form-group">
+        <a asp-action="UpdateAccounts" class="btn btn-success">Confirm Updates</a>
+    </div>
+}
+else
+{
+    <p>No potential updates found.</p>
+}

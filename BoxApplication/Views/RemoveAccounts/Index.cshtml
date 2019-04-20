@@ -5,7 +5,8 @@
 }
 
 <h1>Inactive Accounts</h1>
-
+@if (Model.Count() != 0)
+{
 <table class="table">
     <thead>
         <tr>
@@ -61,4 +62,9 @@
 <div class="form-group">
     <a asp-action="RemoveInactiveAccounts" class="btn btn-success">Remove Inactive Users</a>
 </div>
+}
+else
+{
+    <p>No accounts that require removal found.</p>
+}
 
