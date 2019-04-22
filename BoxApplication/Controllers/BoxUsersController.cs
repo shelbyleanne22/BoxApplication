@@ -9,7 +9,7 @@ using BoxApplication.Models;
 
 namespace BoxApplication.Controllers
 {
-    public class BoxUsersController : Controller
+    public class BoxUsersController : BaseController
     {
         private readonly BoxApplicationContext _context;
 
@@ -21,6 +21,7 @@ namespace BoxApplication.Controllers
         // GET: BoxUsers
         public async Task<IActionResult> Index()
         {
+            await UpdateBoxTable(_context);
             var boxApplicationContext = _context.BoxUsers.Include(b => b.aduser);
             return View(await boxApplicationContext.OrderBy(x => x.DateCreated).ToListAsync());
         }

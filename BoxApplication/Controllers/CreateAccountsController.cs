@@ -74,13 +74,17 @@ namespace BoxApplication.Controllers
             List<ActiveDirectoryUser> usersWithoutBox = GetUsersWithoutBox();
             foreach(ActiveDirectoryUser adUser in usersWithoutBox)
             {
-                var userParams = new BoxUserRequest()
+                string email = adUser.ADEmail;
+                if (email.Substring(email.Length - 8) == "@gru.edu")
                 {
-                    Name = adUser.ADFullName,
-                    Login = adUser.ADEmail
-                };
-                await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
-                await LogAction(adUser.ADEmail, "Created Box Account");
+                    var userParams = new BoxUserRequest()
+                    {
+                        Name = adUser.ADFullName,
+                        Login = adUser.ADEmail
+                    };
+                    await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
+                    await LogAction(adUser.ADEmail, "Created Box Account");
+                }
             }
 
             return View("../Home/Index");
