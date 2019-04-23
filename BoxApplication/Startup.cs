@@ -16,12 +16,18 @@ namespace BoxApplication
 {
     public class Startup
     {
+        public static class MyAppData
+        {
+            public static IConfiguration Configuration;
+        }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            MyAppData.Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)

@@ -37,7 +37,7 @@ namespace BoxApplication.Controllers
                     bool hasBoxAccount = false;
                     foreach (BoxUsers boxUser in _context.BoxUsers)
                     {
-                        if (adUser.ADGUID == boxUser.ADGUID)
+                        if (adUser.ADGUID.SequenceEqual(boxUser.ADGUID))
                         {
                             hasBoxAccount = true;
                             break;
@@ -64,7 +64,7 @@ namespace BoxApplication.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //await UpdateADTable(_context);
+            await UpdateADTable(_context);
             await UpdateBoxTable(_context);
             return View(GetUsersWithoutBox());
         }
@@ -72,6 +72,7 @@ namespace BoxApplication.Controllers
         public async Task<IActionResult> CreateAccounts()
         {
             List<ActiveDirectoryUser> usersWithoutBox = GetUsersWithoutBox();
+            List<ActiveDirectoryUser> errorUsers = new List<ActiveDirectoryUser>();
             foreach(ActiveDirectoryUser adUser in usersWithoutBox)
             {
                 string email = adUser.ADEmail;
@@ -82,8 +83,15 @@ namespace BoxApplication.Controllers
                         Name = adUser.ADFullName,
                         Login = adUser.ADEmail
                     };
-                    await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
-                    await LogAction(adUser.ADEmail, "Created Box Account");
+                    try
+                    {
+                        await _boxclient.UsersManager.CreateEnterpriseUserAsync(userParams);
+                        await LogAction(adUser.ADEmail, "Created Box Account");
+                    }
+                    catch (Exception e)
+                    {
+                        errorUsers.Add(adUser);
+                    }
                 }
             }
 

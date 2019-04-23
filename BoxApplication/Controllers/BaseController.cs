@@ -21,8 +21,11 @@ namespace BoxApplication.Controllers
         public Box.V2.BoxClient BoxConnection()
         {
             // Read in config file
+            string filepath = Environment.CurrentDirectory + "\\" + Startup.MyAppData.Configuration["BoxJWTAuth"];
             IBoxConfig config = null;
-            using (FileStream fs = new FileStream(Environment.CurrentDirectory + "\\678301_s116imjm_config.json", FileMode.Open))
+            
+
+            using (FileStream fs = new FileStream(filepath, FileMode.Open))
             {
                 config = BoxConfig.CreateFromJsonFile(fs);
             }
@@ -78,19 +81,28 @@ namespace BoxApplication.Controllers
                         result.SpaceUsed = newUser.SpaceUsed;
                     }
                 }
-                _context.SaveChanges();
             }
+
+            //Remove accounts from database that have been deleted from admin console, might be able to remove this after deployment
+            foreach(BoxUsers boxUser in _context.BoxUsers)
+            {
+                if (boxUser.Active == true && !users.Entries.Any(x => x.Id == boxUser.ID))
+                    _context.Remove(boxUser);
+            }
+
+            _context.SaveChanges();
+
         }
 
-       
+
         public async Task UpdateADTable(BoxApplicationContext _context)
         {
             //List<ActiveDirectoryUser> inactiveADusers = new List<ActiveDirectoryUser>();
 
             //string DomainPath = "LDAP://hi-root03.mcghi.mcg.edu";
             ////CN = sccs,CN = students, /DC=mcghi,DC=mcg,DC=edu/
-            //string username = "";
-            //string password = "";
+            //string username = Startup.MyAppData.Configuration["ADAuth:Username"];
+            //string password = Startup.MyAppData.Configuration["ADAuth:Password"];
 
 
 

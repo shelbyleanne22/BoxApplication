@@ -100,7 +100,7 @@ namespace BoxApplication.Controllers
 
             foreach (var boxUser in boxUsers)
             {
-                if (boxUser.aduser.ADEmail != boxUser.Login && boxUser.aduser.ADStatus == "Active")
+                if (boxUser.aduser != null && boxUser.aduser.ADEmail != boxUser.Login && boxUser.aduser.ADStatus == "Active")
                 {
                     BoxADUpdate potentialUpdate = new BoxADUpdate
                     {
@@ -113,7 +113,7 @@ namespace BoxApplication.Controllers
                     };
                     potentialUpdates.Add(potentialUpdate);
                 }
-                else if (boxUser.aduser.ADFullName != boxUser.Name && boxUser.aduser.ADStatus == "Active")
+                else if (boxUser.aduser != null && boxUser.aduser.ADFullName != boxUser.Name && boxUser.aduser.ADStatus == "Active")
                 {
                     BoxADUpdate potentialUpdate = new BoxADUpdate
                     {
