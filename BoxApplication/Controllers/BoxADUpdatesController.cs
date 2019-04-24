@@ -56,16 +56,12 @@ namespace BoxApplication.Controllers
 
                     if (boxUpdate.ADFieldChanged == "AD Email")
                     {
-                        var updates = new BoxUserRequest()
-                        {
-                            Id = userNeedsUpdates.Id,
-                            Login = boxUpdate.ADNewData
-                        };
                         try
                         {
-                            BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
+                            BoxUser updatedUser = await boxclient.UsersManager.ChangeUsersLoginAsync(userNeedsUpdates.Id,
+                                boxUpdate.ADNewData);
                         }
-                        catch
+                        catch (Exception e)
                         {
                             failedUpdates.Add(boxUpdate);
                             continue;
