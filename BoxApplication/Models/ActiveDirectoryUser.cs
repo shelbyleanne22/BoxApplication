@@ -18,9 +18,6 @@ namespace BoxApplication.Models
         [DataType(DataType.EmailAddress)]
         public string ADEmail { get; set; }
 
-        //[DisplayName("AD Username")]
-        //public string ADUsername { get; set; }
-
         [DisplayName("AD Full Name")]
         public string ADFullName { get; set; }
 
@@ -30,6 +27,25 @@ namespace BoxApplication.Models
         [DisplayName("Date Last Modified")]
         public DateTime ADDateModified { get; set; }
 
+        public override bool Equals(object obj)
+        {
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+            else
+            {
+                ActiveDirectoryUser aduser = obj as ActiveDirectoryUser;
+                if ((aduser.ADGUID.SequenceEqual(this.ADGUID) &&
+                    aduser.ADEmail == this.ADEmail &&
+                    aduser.ADFullName == this.ADFullName &&
+                    aduser.ADDateModified.Equals(this.ADDateModified) &&
+                    aduser.ADStatus == this.ADStatus))
+                    return true;
+                else
+                    return false;
+            }
+        }
     }
 }
 

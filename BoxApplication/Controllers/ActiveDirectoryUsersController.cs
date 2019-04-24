@@ -24,6 +24,7 @@ namespace BoxApplication.Controllers
         // GET: ActiveDirectoryUsers
         public async Task<IActionResult> Index()
         {
+            await UpdateADTable(_context);
             return View(await _context.ActiveDirectoryUsers.ToListAsync()); 
         }
     }

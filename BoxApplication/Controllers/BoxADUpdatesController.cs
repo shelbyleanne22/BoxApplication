@@ -28,7 +28,7 @@ namespace BoxApplication.Controllers
 
         public async Task<IActionResult> PotentialUpdates()
         {
-            //await UpdateADTable(_context);
+            await UpdateADTable(_context);
             await UpdateBoxTable(_context);
 
             //find accounts that potential need updating and saves in database
@@ -49,32 +49,35 @@ namespace BoxApplication.Controllers
             //for each boxupdate in the context
             foreach (BoxADUpdate boxUpdate in _context.BoxADUpdates.ToList())
             {
-                BoxUser userNeedsUpdates = boxUsers.Where(x => x.Id == boxUpdate.BoxID).FirstOrDefault();
-
-                if (boxUpdate.ADFieldChanged == "AD Email")
+                if (boxUpdate.Status == "Active")
                 {
-                    var updates = new BoxUserRequest()
-                    {
-                        Id = userNeedsUpdates.Id,
-                        Login = boxUpdate.ADNewData
-                    };
-                    BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
-                }
-                else if (boxUpdate.ADFieldChanged == "AD Full Name")
-                {
-                    var updates = new BoxUserRequest()
-                    {
-                        Id = userNeedsUpdates.Id,
-                        Name = boxUpdate.ADNewData
-                    };
-                    BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
-                }
-                //log change
-                await LogAction(userNeedsUpdates.Login, "Updated Box Account");
+                    BoxUser userNeedsUpdates = boxUsers.Where(x => x.Id == boxUpdate.BoxID).FirstOrDefault();
 
-          
+                    if (boxUpdate.ADFieldChanged == "AD Email")
+                    {
+                        var updates = new BoxUserRequest()
+                        {
+                            Id = userNeedsUpdates.Id,
+                            Login = boxUpdate.ADNewData
+                        };
+                        BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
+                    }
+                    else if (boxUpdate.ADFieldChanged == "AD Full Name")
+                    {
+                        var updates = new BoxUserRequest()
+                        {
+                            Id = userNeedsUpdates.Id,
+                            Name = boxUpdate.ADNewData
+                        };
+                        BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
+                    }
+                    boxUpdate.Status = "Inactive";
+                    //log change
+                    await LogAction(userNeedsUpdates.Login, "Updated Box Account");
+                }
             }
 
+            _context.SaveChanges();
             await UpdateBoxTable(_context);
 
             return View("../Home/Index");

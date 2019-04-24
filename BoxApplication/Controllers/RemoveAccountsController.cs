@@ -49,7 +49,7 @@ namespace BoxApplication.Controllers
         // GET: BoxUsers
         public async Task<IActionResult> Index()
         {
-            //await UpdateADTable(_context);
+            await UpdateADTable(_context);
             await UpdateBoxTable(_context);
             return View(await GetInactiveUsers());
         }

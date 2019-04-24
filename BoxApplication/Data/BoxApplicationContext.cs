@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Sqlite;
 using BoxApplication.Models;
 
 namespace BoxApplication.Models
@@ -13,6 +14,8 @@ namespace BoxApplication.Models
             : base(options)
         {
         }
+
+
 
         public DbSet<BoxApplication.Models.ActiveDirectoryUser> ActiveDirectoryUsers { get; set; }
 

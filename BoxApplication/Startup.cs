@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Sqlite;
 using BoxApplication.Models;
 
 namespace BoxApplication
@@ -43,12 +44,13 @@ namespace BoxApplication
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<BoxApplicationContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("BoxApplicationContext")));
+                    options.UseSqlite(Configuration.GetConnectionString("BoxApplicationContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
