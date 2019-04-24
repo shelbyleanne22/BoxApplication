@@ -44,7 +44,8 @@ namespace BoxApplication.Controllers
             //establishes box connection
             Box.V2.BoxClient boxclient = BoxConnection();
             BoxCollection<BoxUser> users = await boxclient.UsersManager.GetEnterpriseUsersAsync();
-            List<BoxUser> boxUsers = users.Entries;    
+            List<BoxUser> boxUsers = users.Entries;
+            List<BoxADUpdate> failedUpdates = new List<BoxADUpdate>();
             
             //for each boxupdate in the context
             foreach (BoxADUpdate boxUpdate in _context.BoxADUpdates.ToList())
@@ -60,7 +61,15 @@ namespace BoxApplication.Controllers
                             Id = userNeedsUpdates.Id,
                             Login = boxUpdate.ADNewData
                         };
-                        BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
+                        try
+                        {
+                            BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
+                        }
+                        catch
+                        {
+                            failedUpdates.Add(boxUpdate);
+                            continue;
+                        }
                     }
                     else if (boxUpdate.ADFieldChanged == "AD Full Name")
                     {
@@ -69,7 +78,15 @@ namespace BoxApplication.Controllers
                             Id = userNeedsUpdates.Id,
                             Name = boxUpdate.ADNewData
                         };
-                        BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
+                        try
+                        {
+                            BoxUser updatedUser = await boxclient.UsersManager.UpdateUserInformationAsync(updates);
+                        }
+                        catch
+                        {
+                            failedUpdates.Add(boxUpdate);
+                            continue;
+                        }
                     }
                     boxUpdate.Status = "Inactive";
                     //log change
